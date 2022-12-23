@@ -15,3 +15,5 @@ pdm.lock
 __pypackages__/
 .venv/
 .vscode/
+*.ipynb
+.DS_Store
