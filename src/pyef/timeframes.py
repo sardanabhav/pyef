@@ -1,40 +1,42 @@
-"""Contains base classes - TimeSeries and TimeFrames.
+"""
+Contains base classes - TimeSeries and TimeFrames.
+
 These perform preprocessing on input data and converts
 it to a format which is suitable for feeding to sklearn
 compatible models
 
 """
 
-import os
 import pandas as pd
 
 from typing import Any
-from pkg_resources import resource_filename
-from .utils import get_logger
-from numpy import nan
-from datetime import datetime
-from ._config import get_option
-
-__author__ = "Bhav Sardana"
+from pyef.utils import get_logger
+from pyef._config import get_option
 
 logger = get_logger(__name__)
 
 class EnergyTimeFrame:
     """
-    Class to preprocess load and temperature data to make it suitable for time series forecasting
+    Class to preprocess load and temperature data to make it suitable 
+    for energy related time series forecasting.
+    It will support electric load forecasting, electricity price forecasting,
+    wind power forecasting and solar power forecasting
     """
+
 
     def __init__(
         self,
         kwh_series: pd.Series | pd.DataFrame,
         weather_series: pd.Series | pd.DataFrame,
-        ex_ante: bool=False,
-        sub_hourly: bool=False
+        ex_ante: bool = False,
+        sub_hourly: bool = False
     ) -> None:
+        """ TODO: Add docstring """
+
         self._original_series = {
                 'kwh_series': kwh_series.copy(deep=True),
                 'weather_series': weather_series.copy(deep=True)
-            }
+        }
         self.sub_hourly = sub_hourly
         self._validate()
         self._kwh_series = kwh_series
@@ -43,8 +45,8 @@ class EnergyTimeFrame:
         self._infer_freq()
         self._clean_data()
 
-
         # add weather features
+        # TODO Move away from adding new features. Instead, use patsy to create these features
 
         self._add_dd()
         self._weather_series = self._add_polynomial(self._weather_series, get_option('preprocessing.weather.pol_dict'))
