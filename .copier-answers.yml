@@ -17,4 +17,3 @@ repository_name: pyef
 repository_namespace: sardanabhav
 repository_provider: github.com
 use_precommit: true
-
