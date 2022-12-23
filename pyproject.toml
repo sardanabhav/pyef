@@ -115,6 +115,10 @@ typing = [
     "types-setuptools>=65.6.0.2",
 ]
 security = ["safety>=2"]
+notebook = [
+    "ipykernel>=6.19.4",
+    "jupyter>=1.0.0",
+]
 
 [tool.black]
 line-length = 120
@@ -129,3 +133,15 @@ balanced_wrapping = true
 default_section = "THIRDPARTY"
 known_first_party = "pyef"
 include_trailing_comma = true
+
+
+[tool.mypy]
+files = ["src", "tests"]
+show_error_codes = true
+strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["patsy", "optioneer", "memo", "pandas", "sklearn.*"]
+ignore_missing_imports = true

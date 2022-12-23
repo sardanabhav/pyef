@@ -171,7 +171,6 @@ class Forecaster:
         if self.wieghed:
             wieght_group = self.wieghts.groupby(self.wieghts.index.hour)
         for name, group in self.X_train.groupby(self.X_train.index.hour):
-
             try:
                 # logger.debug(f"train features = {list(self.X_train.columns)}")
                 if not self.wieghed:

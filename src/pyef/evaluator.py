@@ -77,7 +77,6 @@ class ModelGridSearch:
         self.file_path = resource_filename("pyef", os.path.join("data", "bigdeal2022"))
 
     def _search(self) -> None:
-
         out_of_sample = []
         in_sample = []
         plots = []
