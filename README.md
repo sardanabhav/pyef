@@ -7,6 +7,7 @@
 [![gitter](https://badges.gitter.im/join%20chat.svg)](https://gitter.im/pyef/community)
 
 Energy Forecasting Toolkit in Python
+This is a work in progress. Do not use
 
 ## Installation
 
