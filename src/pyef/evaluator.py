@@ -4,9 +4,9 @@ Evaluator
 
 import os
 from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
-from .forecaster import Forecaster
-from .timeframes import EnergyTimeFrame
-from .utils import get_logger
+from pyef.forecaster import Forecaster
+from pyef.timeframes import EnergyTimeFrame
+from pyef.logger import get_logger
 import math
 from typing import Dict, Union, Any
 import pandas as pd

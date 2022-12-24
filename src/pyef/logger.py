@@ -1,13 +1,23 @@
+"""logger
+this module should not exist
+"""
+
 import logging
 from rich.logging import RichHandler
-from ._config import get_option
-
-__author__ = "Bhav Sardana"
+from pyef._config import get_option
 
 
 def get_logger(
     name: str,
 ) -> logging.Logger:
+    """TODO add summary.
+
+    Args:
+        name (str): _description_
+
+    Returns:
+        logging.Logger: _description_
+    """
     level = get_option("logging_level")
     logger = logging.getLogger(name)
     shell_handler = RichHandler()

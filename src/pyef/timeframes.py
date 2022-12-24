@@ -10,7 +10,7 @@ compatible models
 import pandas as pd
 
 from typing import Any
-from pyef.utils import get_logger
+from pyef.logger import get_logger
 from pyef._config import get_option
 
 logger = get_logger(__name__)
@@ -21,7 +21,7 @@ class EnergyTimeFrame:
     Class to preprocess load and temperature data to make it suitable
     for energy related time series forecasting.
     It will support electric load forecasting, electricity price forecasting,
-    wind power forecasting and solar power forecasting
+    wind power forecasting and solar power forecasting.
     """
 
     def __init__(

@@ -1,5 +1,6 @@
 """
-Forecaster class
+Forecaster class.
+TODO add shit.
 
 """
 
@@ -8,12 +9,9 @@ from typing import Union, Tuple, Dict, Any
 import pandas as pd
 import numpy as np
 from patsy import dmatrices
-from .utils import get_logger
+from pyef.logger import get_logger
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-import os
-from numpy import nan
-from pkg_resources import resource_filename
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.decomposition import PCA
@@ -54,43 +52,6 @@ class Forecaster:
         self.trained = False
         self.predicted = False
         logger.debug("forecaster initiated")
-
-    def _data_prep(self) -> None:
-        logger.debug("_data_prep")
-        # check usage data after pred start and replace na by small value for patsy
-        future_usage = self.feature_dataset.loc[self.feature_dataset.index >= self.pred_start, self.data.target_col]
-        if future_usage.isna().all():
-            self.feature_dataset.loc[self.feature_dataset.index > self.pred_start, self.data.target_col] = 0.001
-        else:
-            self.feature_dataset.loc[self.feature_dataset[self.data.target_col].isna(), self.data.target_col] = 0.01
-
-        if self.wieghed:
-            train_features, _ = self._split_data(self.feature_dataset)
-            self.wieghts = train_features["importance"]
-
-        y, X = dmatrices(formula_like=self.formula, data=self.feature_dataset, return_type="dataframe")
-
-        if self.pca and self.pca_components:
-            logger.warn(f"running PCA. Features will be reduced to {self.pca_components}")
-            pca_obj = PCA(n_components=self.pca_components)
-            X = pd.DataFrame(pca_obj.fit_transform(X), index=X.index)
-        # else:
-        #     logger.warn("Not running PCA. Something missing")
-        # elif self.pca and self.pca_components == None:
-        #     self.list_X = []
-        #     for n in range(10, 150, 10):
-        #         pca_obj = PCA(n_components=n)
-        #         self.list_X.append(pca_obj.fit_transform(self.X))
-        self.y_train, self.y_test = self._split_data(y)
-        self.X_train, self.X_test = self._split_data(X)
-        # print(self.X_train.index.min())
-        # print(self.X_train.index.max())
-
-        # print(self.X_test.index.min())
-        # print(self.X_test.index.max())
-
-    def _get_train_test(self, y: pd.DataFrame, X: pd.DataFrame) -> None:
-        pass
 
     def get_forecast(self) -> None:
         if self.fit_values:
@@ -221,8 +182,46 @@ class Forecaster:
         self.pred_in_sample = self.pred_in_sample.sort_index()
         self.pred_in_sample["actuals"] = self.y_train
 
+    def _data_prep(self) -> None:
+        logger.debug("_data_prep")
+        # check usage data after pred start and replace na by small value for patsy
+        future_usage = self.feature_dataset.loc[self.feature_dataset.index >= self.pred_start, self.data.target_col]
+        if future_usage.isna().all():
+            self.feature_dataset.loc[self.feature_dataset.index > self.pred_start, self.data.target_col] = 0.001
+        else:
+            self.feature_dataset.loc[self.feature_dataset[self.data.target_col].isna(), self.data.target_col] = 0.01
+
+        if self.wieghed:
+            train_features, _ = self._split_data(self.feature_dataset)
+            self.wieghts = train_features["importance"]
+
+        y, X = dmatrices(formula_like=self.formula, data=self.feature_dataset, return_type="dataframe")
+
+        if self.pca and self.pca_components:
+            logger.warn(f"running PCA. Features will be reduced to {self.pca_components}")
+            pca_obj = PCA(n_components=self.pca_components)
+            X = pd.DataFrame(pca_obj.fit_transform(X), index=X.index)
+        # else:
+        #     logger.warn("Not running PCA. Something missing")
+        # elif self.pca and self.pca_components == None:
+        #     self.list_X = []
+        #     for n in range(10, 150, 10):
+        #         pca_obj = PCA(n_components=n)
+        #         self.list_X.append(pca_obj.fit_transform(self.X))
+        self.y_train, self.y_test = self._split_data(y)
+        self.X_train, self.X_test = self._split_data(X)
+        # print(self.X_train.index.min())
+        # print(self.X_train.index.max())
+
+        # print(self.X_test.index.min())
+        # print(self.X_test.index.max())
+
+    def _get_train_test(self, y: pd.DataFrame, X: pd.DataFrame) -> None:
+        pass
+
     def _split_data(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         df_split = df.copy(deep=True)
+        # TODO make relativedelta configurable
         df_train = df_split.loc[
             (df_split.index >= self.pred_start - relativedelta(years=3)) & (df_split.index < self.pred_start), :
         ]
