@@ -106,6 +106,7 @@ tests = [
     "pytest-cov>=3.0",
     "pytest-randomly>=3.10",
     "pytest-xdist>=2.4",
+    "setuptools>=65.6.3"
 ]
 typing = [
     "mypy>=0.910",
