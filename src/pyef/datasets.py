@@ -1,11 +1,10 @@
 import os
-import numpy as np
 import pandas as pd
 from pkg_resources import resource_filename
 from sklearn.datasets import fetch_openml
 
 
-def load_gefcom_load_2012() -> dict[str, pd.DataFrame]:
+def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     """
     Loads GEFCom 2012 dataset
     src: https://www.dropbox.com/s/epj9b57eivn79j7/GEFCom2012.zip?dl=1
@@ -13,9 +12,6 @@ def load_gefcom_load_2012() -> dict[str, pd.DataFrame]:
     TODO add references
     TODO add examples
 
-    Args:
-        return_X_y (bool, optional): _description_. Defaults to False.
-        as_frame (bool, optional): _description_. Defaults to False.
     """
 
     # TODO fix hour - hour ending (only change 24th hour to 0)
@@ -30,7 +26,7 @@ def load_gefcom_load_2012() -> dict[str, pd.DataFrame]:
 
     df_load = pd.melt(df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load")
     df_load["hour"] = df_load["hour"].str.replace("h", "")
-    df_load["hour"] = df_load["hour"].apply(lambda x: int(x)) - 1
+    df_load["hour"] = df_load["hour"].apply(lambda x: int(x))
     df_load["datetime"] = pd.to_datetime(df_load[["year", "month", "day", "hour"]])
     df_load = df_load.drop(["year", "month", "day", "hour"], axis=1)
     df_load = df_load.set_index("datetime").sort_index()
@@ -41,7 +37,7 @@ def load_gefcom_load_2012() -> dict[str, pd.DataFrame]:
         df_temperature_1, id_vars=["station_id"] + melt_cols, var_name="hour", value_name="temperature"
     )
     df_temperature_1["hour"] = df_temperature_1["hour"].str.replace("h", "")
-    df_temperature_1["hour"] = df_temperature_1["hour"].apply(lambda x: int(x)) - 1
+    df_temperature_1["hour"] = df_temperature_1["hour"].apply(lambda x: int(x))
     df_temperature_1["datetime"] = pd.to_datetime(df_temperature_1[["year", "month", "day", "hour"]])
     df_temperature_1 = df_temperature_1.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_1 = df_temperature_1.set_index("datetime")
@@ -61,14 +57,14 @@ def load_gefcom_load_2012() -> dict[str, pd.DataFrame]:
     return {"load": df_load, "temperature": df_temperature}
 
 
-def load_bigdeal_2022() -> dict[str, pd.DataFrame]:
+def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
     """_summary_
 
     Returns:
         dict[str, pd.DataFrame]: _description_
     """
 
-    filepath = resource_filename("pyef", os.path.join("data", "bigdeal2022"))
+    filepath = resource_filename("pyef", os.path.join("data", "bigdeal2022", "qualifying_match"))
 
     data = pd.read_csv(f"{filepath}/data_round_1.csv")
     data.columns = data.columns.str.lower()
@@ -98,7 +94,7 @@ def load_bigdeal_2022() -> dict[str, pd.DataFrame]:
     return {"load": df_load, "temperature": df_temperature}
 
 
-def load_bigdeal_2022_final() -> dict[str, pd.DataFrame]:
+def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
     """_summary_
 
     Returns:
@@ -111,18 +107,19 @@ def load_bigdeal_2022_final() -> dict[str, pd.DataFrame]:
     data.columns = data.columns.str.lower()
     data.index = pd.to_datetime(data["date"])
     data.index += pd.TimedeltaIndex(data["hour"], unit="h")
+    data.index.name = "datetime"
 
     df_load_1 = data.loc[:, ["ldc1"]]
     df_load_1.columns = ["load"]
-    df_load_1["zone"] = 1
+    df_load_1["zone_id"] = 1
 
     df_load_2 = data.loc[:, ["ldc2"]]
     df_load_2.columns = ["load"]
-    df_load_2["zone"] = 2
+    df_load_2["zone_id"] = 2
 
     df_load_3 = data.loc[:, ["ldc3"]]
     df_load_3.columns = ["load"]
-    df_load_3["zone"] = 3
+    df_load_3["zone_id"] = 3
 
     df_load = pd.concat(
         [

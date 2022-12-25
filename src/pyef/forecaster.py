@@ -4,7 +4,7 @@ TODO add shit.
 
 """
 
-from .timeframes import EnergyTimeFrame
+from pyef.timeframes import EnergyTimeFrame
 from typing import Union, Tuple, Dict, Any
 import pandas as pd
 import numpy as np
