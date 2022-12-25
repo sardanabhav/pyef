@@ -146,5 +146,5 @@ exclude = "tests/fixtures/"
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
-module = ["patsy", "optioneer", "memo", "pandas", "sklearn.*"]
+module = ["patsy", "optioneer", "memo", "pandas", "sklearn.*", "pytest"]
 ignore_missing_imports = true
