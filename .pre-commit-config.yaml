@@ -17,7 +17,7 @@ repos:
     rev: v0.910-1
     hooks:
     -   id: mypy
-        exclude: ^(docs/|example-plugin/|tests/fixtures|scripts/)
+        exclude: ^(docs/|example-plugin/|tests/fixtures|scripts/|duties.py)
         # include: ^(src/|tests/)
 -   repo: local
     hooks:

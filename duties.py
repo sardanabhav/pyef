@@ -196,7 +196,7 @@ def check_types(ctx):  # noqa: WPS231
     Arguments:
         ctx: The context instance (passed automatically).
     """
-    ctx.run(f"mypy --config-file config/mypy.ini {PY_SRC}", title="Type-checking", pty=PTY)
+    ctx.run(f"mypy --config-file pyproject.toml {PY_SRC}", title="Type-checking", pty=PTY)
 
 
 @duty(silent=True)
