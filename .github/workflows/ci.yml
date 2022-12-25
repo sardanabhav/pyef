@@ -41,8 +41,9 @@ jobs:
     - name: Check if the documentation builds correctly
       run: pdm run duty check-docs
 
-    - name: Check the code quality
-      run: pdm run duty check-quality
+    # TODO use this later
+    # - name: Check the code quality
+    #   run: pdm run duty check-quality
 
     - name: Check if the code is correctly typed
       run: pdm run duty check-types
