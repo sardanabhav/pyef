@@ -51,6 +51,7 @@ options_maker.register_option(
 
 options = options_maker.options
 get_option = options_maker.get_option
+set_option = options_maker.set_option
 
 # options = {
 #     'preprocessing': {

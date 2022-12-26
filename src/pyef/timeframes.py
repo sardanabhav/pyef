@@ -46,25 +46,29 @@ class EnergyTimeFrame:
         }
         self.sub_hourly = sub_hourly
         self._validate()
-        self._kwh_series = kwh_series
-        self._weather_series = weather_series
+        if self.validated:
+            self._kwh_series = kwh_series
+            self._weather_series = weather_series
 
-        self._infer_freq()
-        self._clean_data()
+            self._infer_freq()
+            self._clean_data()
 
-        # add weather features
-        # TODO Move away from adding new features. Instead, use patsy to create these features
+            # add weather features
+            # TODO Move away from adding new features. Instead, use patsy to create these features
 
-        self._add_dd()
-        self._weather_series = self._add_polynomial(self._weather_series, get_option("preprocessing.weather.pol_dict"))
-        self._weather_series = self._add_lags(self._weather_series, get_option("preprocessing.weather.lags_dict"))
-        self._weather_series = self._add_mas(self._weather_series, get_option("preprocessing.weather.mas_dict"))
+            self._add_dd()
+            self._weather_series = self._add_polynomial(
+                self._weather_series, get_option("preprocessing.weather.pol_dict")
+            )
+            self._weather_series = self._add_lags(self._weather_series, get_option("preprocessing.weather.lags_dict"))
+            self._weather_series = self._add_mas(self._weather_series, get_option("preprocessing.weather.mas_dict"))
 
-        # create combined dataset
-        self._create_feature_dataset()
+            # create combined dataset
+            self._create_feature_dataset()
 
-        # add calendar
-        self._add_calendar()
+            # add calendar
+            self._add_calendar()
+        self.cleanup()
 
     @property
     def original_series(self) -> dict[str, pd.DataFrame]:
@@ -265,6 +269,9 @@ class EnergyTimeFrame:
     #     self
     # ) -> None:
     #     self.feature_dataset['holiday'] =
+
+    def cleanup(self) -> None:
+        ...
 
     def plot(self, **kwargs: Any) -> pd.plotting.PlotAccessor:
         fig = self.feature_dataset.plot(**kwargs)

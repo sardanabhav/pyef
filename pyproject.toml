@@ -32,6 +32,9 @@ dependencies = [
     "numpy==1.24.0",
     "pandas>=1.5.2",
     "scikit-learn>=1.2.0",
+    "optioneer>=1.0.3",
+    "rich>=12.6.0",
+    "patsy>=0.5.3",
     "memo>=0.2.3",
 ]
 
