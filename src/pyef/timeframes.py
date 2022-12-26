@@ -47,8 +47,8 @@ class EnergyTimeFrame:
         self.sub_hourly = sub_hourly
         self._validate()
         if self.validated:
-            self._kwh_series = kwh_series
-            self._weather_series = weather_series
+            self._kwh_series = kwh_series.copy(deep=True)
+            self._weather_series = weather_series.copy(deep=True)
 
             self._infer_freq()
             self._clean_data()
