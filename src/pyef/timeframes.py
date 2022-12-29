@@ -12,6 +12,8 @@ import pandas as pd
 from typing import Any
 from pyef.logger import get_logger
 from pyef._config import get_option
+from pandas.tseries.frequencies import to_offset
+import numpy as np
 
 logger = get_logger(__name__)
 
@@ -46,6 +48,7 @@ class EnergyTimeFrame:
         }
         self.sub_hourly = sub_hourly
         self._validate()
+        self._freq_warn = False
         if self.validated:
             self._kwh_series = kwh_series.copy(deep=True)
             self._weather_series = weather_series.copy(deep=True)
@@ -96,6 +99,11 @@ class EnergyTimeFrame:
             logger.error(msg)
             return False
 
+        # if ~ data.index.is_unique:
+        #     msg = f"Could not validate {series} series. Please make sure it has unique indices"
+        #     logger.error(msg)
+        #     return False
+
         if cols == []:
             msg = f'Could not validate {series} series. Please make sure it includes one of {get_option(f"preprocessing.{series}.accepted_columns")} columns'
             logger.error(msg)
@@ -115,7 +123,31 @@ class EnergyTimeFrame:
         pass
 
     def _get_freq(self, df: pd.DataFrame) -> int:
-        return int((df.index[1] - df.index[0]).total_seconds() / 60)
+        freqs, counts = np.unique(
+            np.array((df.index[1:] - df.index[:-1]).total_seconds() / 60).astype(int), return_counts=True
+        )
+        if freqs.size == 1:
+            # check if infered is equal to freq infered from pandas
+            pd_freq = int(pd.to_timedelta(to_offset(pd.infer_freq(df.index))).total_seconds() / 60)
+            if pd_freq == freqs[0]:
+                return int(freqs[0])
+            else:
+                # still return the infered freq, but set warn to true so that new index is created in cleaning
+                logger.warning("Infered freq did not match pandas' infered freq.")
+                self._freq_warn = True
+                return int(freqs[0])
+        elif freqs.size > 1:
+            self._freq_warn = True
+            logger.warning(
+                "Multiple frequencies found. This might be because of some missing timestamps within the series index."
+            )
+            logger.warning(f"Frequencies found: {freqs}\nTheir respective counts: {counts}")
+            logger.warning(f"Using freq: {freqs[np.argmax(counts)]} which has most counts {counts[np.argmax(counts)]}")
+            return int(freqs[np.argmax(counts)])
+        else:
+            logger.error(f"{freqs}, {counts}")
+            raise
+        # return int((df.index[1] - df.index[0]).total_seconds() / 60)
 
     def _infer_freq(self) -> None:
         """
@@ -135,6 +167,24 @@ class EnergyTimeFrame:
     def _clean_data(self) -> None:
         # TODO Add a clean timestamp
         # self._processing_data = pd.date_range(data.raw_data.index.min(), data.raw_data.index.max(), freq='15T')
+        if self._freq_warn:
+            logger.warning("Recreating the datetime index for both weather and kwh series")
+            # add new datetime index based on infered freq
+            kwh_index = pd.date_range(
+                self._kwh_series.index[0], end=self._kwh_series.index[-1], freq=f"{self.freq_kwh}min"
+            )
+            weather_index = pd.date_range(
+                self._weather_series.index[0], end=self._weather_series.index[-1], freq=f"{self.freq_weather}min"
+            )
+            self._kwh_series = pd.DataFrame(index=kwh_index).merge(
+                self._kwh_series, left_index=True, right_index=True, how="left"
+            )
+            self._kwh_series.index.name = "datetime"
+            self._weather_series = pd.DataFrame(index=weather_index).merge(
+                self._weather_series, left_index=True, right_index=True, how="left"
+            )
+            self._weather_series.index.name = "datetime"
+
         self._kwh_series.sort_index().interpolate(
             method=get_option(f"preprocessing.kwh.fill_na"), limit_direction="forward", axis=0
         )

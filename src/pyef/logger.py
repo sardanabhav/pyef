@@ -23,7 +23,7 @@ def get_logger(
     shell_handler = RichHandler()
     logger.setLevel(level)
     shell_handler.setLevel(level)
-    fmt_shell = "%(asctime)s [%(filename)s:%(funcName)s:%(lineno)d] %(message)s"
+    fmt_shell = "[%(filename)s:%(funcName)s:%(lineno)d] %(message)s"
     shell_formatter = logging.Formatter(fmt_shell)
     shell_handler.setFormatter(shell_formatter)
     logger.addHandler(shell_handler)

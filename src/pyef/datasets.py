@@ -72,6 +72,7 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
     data.index = data["datetime"]
 
     df_load = data.loc[:, ["load"]]
+    df_load["zone_id"] = 1
 
     df_temperature_1 = data.loc[:, ["t1"]]
     df_temperature_1.columns = ["temperature"]

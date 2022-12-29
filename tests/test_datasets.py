@@ -39,7 +39,7 @@ def test_bigdeal_qualifying_2022_cols() -> None:
     bigdeal_2022 = bigdeal_qualifying_2022()
     load = bigdeal_2022["load"]
     temperature = bigdeal_2022["temperature"]
-    assert load.columns.str.contains("load").sum() == load.shape[1]
+    assert load.columns.str.contains("load|zone").sum() == load.shape[1]
     assert temperature.columns.str.contains("temperature|station").sum() == temperature.shape[1]
     assert load.index.name == temperature.index.name == "datetime"
 
@@ -49,7 +49,7 @@ def test_bigdeal_qualifying_2022_shape() -> None:
     load = bigdeal_2022["load"]
     temperature = bigdeal_2022["temperature"]
     stations = temperature.groupby("station_id")
-    assert (load.size == 52584).all()
+    assert load.shape[0] == 52584
     assert (stations.size().unique() == (52584)).all()
 
 
