@@ -10,6 +10,12 @@ def test_gefcom_load_2012_keys() -> None:
     assert "temperature" in gefcom_2012
 
 
+def test_gefcom_load_2012_indices() -> None:
+    gefcom_2012 = gefcom_load_2012()
+    assert gefcom_2012["load"].set_index("zone_id", append=True).index.duplicated().sum() == 0
+    assert gefcom_2012["temperature"].set_index("station_id", append=True).index.duplicated().sum() == 0
+
+
 def test_gefcom_load_2012_cols() -> None:
     gefcom_2012 = gefcom_load_2012()
     load = gefcom_2012["load"]
@@ -25,8 +31,8 @@ def test_gefcom_load_2012_shape() -> None:
     temperature = gefcom_2012["temperature"]
     zones = load.groupby("zone_id")
     stations = temperature.groupby("station_id")
-    assert (zones.size().unique() == (41112, 1512)).all()
-    assert (stations.size().unique() == (39618)).all()
+    assert (zones.size().unique() == (39600)).all()
+    assert (stations.size().unique() == (39432)).all()
 
 
 def test_bigdeal_qualifying_2022_keys() -> None:

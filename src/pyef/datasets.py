@@ -17,19 +17,26 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     # TODO fix hour - hour ending (only change 24th hour to 0)
     melt_cols = ["year", "month", "day"]
     filepath = resource_filename("pyef", os.path.join("data", "gefcom2012", "load"))
-    df_load = pd.concat(
-        [
-            pd.read_csv(f"{filepath}/Load_history.csv", thousands=","),
-            pd.read_csv(f"{filepath}/Load_solution.csv", thousands=",").drop(["weight", "id"], axis=1),
-        ]
-    )
+    load_history = pd.read_csv(f"{filepath}/Load_history.csv", thousands=",")
+    load_solution = pd.read_csv(f"{filepath}/Load_solution.csv", thousands=",").drop(["weight", "id"], axis=1)
 
-    df_load = pd.melt(df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load")
-    df_load["hour"] = df_load["hour"].str.replace("h", "")
-    df_load["hour"] = df_load["hour"].apply(lambda x: int(x))
-    df_load["datetime"] = pd.to_datetime(df_load[["year", "month", "day", "hour"]])
-    df_load = df_load.drop(["year", "month", "day", "hour"], axis=1)
-    df_load = df_load.set_index("datetime").sort_index()
+    def convert_to_ts(df_load: pd.DataFrame) -> pd.DataFrame:
+        df_load = pd.melt(df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load")
+        df_load["hour"] = df_load["hour"].str.replace("h", "")
+        df_load["hour"] = df_load["hour"].apply(lambda x: int(x))
+        df_load["datetime"] = pd.to_datetime(df_load[["year", "month", "day", "hour"]])
+        df_load = df_load.drop(["year", "month", "day", "hour"], axis=1)
+        df_load = df_load.set_index("datetime").sort_index()
+        return df_load
+
+    load_history = convert_to_ts(df_load=load_history)
+    load_solution = convert_to_ts(df_load=load_solution)
+
+    df_load = (
+        load_history.set_index("zone_id", append=True)
+        .fillna(load_solution.set_index("zone_id", append=True))
+        .reset_index(level=1)
+    )
 
     df_temperature_1 = pd.read_csv(f"{filepath}/temperature_history.csv")
 
@@ -52,7 +59,12 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     df_temperature_2 = df_temperature_2.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_2 = df_temperature_2.set_index("datetime")
 
-    df_temperature = pd.concat([df_temperature_1, df_temperature_2]).sort_index()
+    # df_temperature = pd.concat([df_temperature_1, df_temperature_2]).sort_index()
+    df_temperature = (
+        df_temperature_1.set_index("station_id", append=True)
+        .fillna(df_temperature_2.set_index("station_id", append=True))
+        .reset_index(level=1)
+    )
 
     return {"load": df_load, "temperature": df_temperature}
 
