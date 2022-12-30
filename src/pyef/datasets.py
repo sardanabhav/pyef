@@ -64,7 +64,7 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
         df_temperature_1.set_index("station_id", append=True)
         .fillna(df_temperature_2.set_index("station_id", append=True))
         .reset_index(level=1)
-    )
+    ).sort_index()
 
     return {"load": df_load, "temperature": df_temperature}
 
