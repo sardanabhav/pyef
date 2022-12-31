@@ -12,5 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * TimeFrames - Contains EnergyTimeFrame class which preprocesses energy time series data to make it sutible to feed to Forecaster
 * Forecaster - Forecaster class takes EnergyTimeFrame and sklearn compatible model to get a forecast
 * Evaluator - Evaluator class will contain different metrics that can be calculated from the forecasted values
+* Datasets - Some commonly used Energy datasets
 
 <small>[Compare with first commit](https://github.com/sardanabhav/pyef/compare/3db920bff02c25d7e97ae8274c768ff1f523e4ab...0.1.0)</small>
