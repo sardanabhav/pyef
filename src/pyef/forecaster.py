@@ -32,28 +32,32 @@ class Forecaster:
         fit_values: bool = False,
         horizon: int = 24,
         wieghed: bool = False,
-        log_target: bool = True,
+        log_target: bool = False,
         pca: bool = False,
         pca_components: int | None = None,
     ) -> None:
         self.data = data
-        self.feature_dataset = self.data.feature_dataset.copy(deep=True)
-        self.formula = formula
-        self.model = model
-        self.pred_start = pred_start
-        self.fit_values = fit_values
-        self.horizon = horizon
-        self.wieghed = wieghed
-        self.log_target = log_target
-        self.pca = pca
-        self.pca_components = pca_components
-        self.pred_end = self.pred_start + timedelta(hours=self.horizon)
-        self._data_prep()
+        if self.data.validated:
+            self.feature_dataset = self.data.feature_dataset.copy(deep=True)
+            self.formula = formula
+            self.model = model
+            self.pred_start = pred_start
+            self.fit_values = fit_values
+            self.horizon = horizon
+            self.wieghed = wieghed
+            self.log_target = log_target
+            self.pca = pca
+            self.pca_components = pca_components
+            self.pred_end = self.pred_start + timedelta(hours=self.horizon)
+            self._data_prep()
         self.trained = False
         self.predicted = False
         logger.debug("forecaster initiated")
 
     def get_forecast(self) -> None:
+        if not self.data.validated:
+            raise
+
         if self.fit_values:
             self.X_train.columns = list(range(self.X_train.shape[1]))
             self.X_test.columns = list(range(self.X_test.shape[1]))

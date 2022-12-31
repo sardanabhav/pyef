@@ -185,12 +185,21 @@ class EnergyTimeFrame:
             )
             self._weather_series.index.name = "datetime"
 
-        self._kwh_series.sort_index().interpolate(
+        self._kwh_series = self._kwh_series.sort_index().interpolate(
             method=get_option(f"preprocessing.kwh.fill_na"), limit_direction="forward", axis=0
         )
-        self._weather_series.sort_index().interpolate(
+        self._weather_series = self._weather_series.sort_index().interpolate(
             method=get_option(f"preprocessing.weather.fill_na"), limit_direction="forward", axis=0
         )
+
+        if self._weather_series.shape[0] != self._kwh_series.shape[0]:
+            # logger.warn("KWH and Weather series are not of the same length. Making them equal")
+            if self._weather_series.index.max() > self._kwh_series.index.max():
+                self._weather_series = self._weather_series.loc[
+                    self._weather_series.index < self._kwh_series.index.max()
+                ]
+            else:
+                self._kwh_series = self._kwh_series.loc[self._kwh_series.index < self._weather_series.index.max()]
 
     def _create_feature_dataset(self) -> None:
         self.feature_dataset = self._kwh_series.merge(
