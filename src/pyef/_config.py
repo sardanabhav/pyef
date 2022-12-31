@@ -1,5 +1,6 @@
-from optioneer import Optioneer
 import logging
+
+from optioneer import Optioneer
 
 options_maker = Optioneer()
 

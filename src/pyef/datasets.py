@@ -1,7 +1,7 @@
 import os
+
 import pandas as pd
 from pkg_resources import resource_filename
-from sklearn.datasets import fetch_openml
 
 
 def gefcom_load_2012() -> dict[str, pd.DataFrame]:

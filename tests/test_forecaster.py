@@ -1,13 +1,14 @@
 """ Test Forecaster """
 
+from typing import Iterator
+
+import pandas as pd
 import pytest
-from pyef.datasets import gefcom_load_2012, bigdeal_qualifying_2022, bigdeal_final_2022
+from sklearn.linear_model import LinearRegression
+
+from pyef.datasets import bigdeal_final_2022, bigdeal_qualifying_2022, gefcom_load_2012
 from pyef.forecaster import Forecaster
 from pyef.timeframes import EnergyTimeFrame
-from sklearn.linear_model import LinearRegression
-from datetime import datetime
-from typing import Iterator
-import pandas as pd
 
 
 @pytest.mark.parametrize("data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()])

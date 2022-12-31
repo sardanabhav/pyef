@@ -1,6 +1,5 @@
 """Tests for the `cli` module."""
 
-import pytest
 
 from pyef import cli
 

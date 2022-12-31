@@ -7,13 +7,14 @@ compatible models
 
 """
 
-import pandas as pd
-
 from typing import Any
-from pyef.logger import get_logger
-from pyef._config import get_option
-from pandas.tseries.frequencies import to_offset
+
 import numpy as np
+import pandas as pd
+from pandas.tseries.frequencies import to_offset
+
+from pyef._config import get_option
+from pyef.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -120,7 +121,6 @@ class EnergyTimeFrame:
         start with reading csv files.
         implement reading from databases/aws s3 etc
         """
-        pass
 
     def _get_freq(self, df: pd.DataFrame) -> int:
         freqs, counts = np.unique(

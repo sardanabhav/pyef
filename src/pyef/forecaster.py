@@ -4,17 +4,19 @@ TODO add shit.
 
 """
 
-from pyef.timeframes import EnergyTimeFrame
-from typing import Union, Tuple, Dict, Any
-import pandas as pd
-import numpy as np
-from patsy import dmatrices
-from pyef.logger import get_logger
 from datetime import datetime, timedelta
+from typing import Any, Tuple, Union
+
+import numpy as np
+import pandas as pd
 from dateutil.relativedelta import relativedelta
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from patsy import dmatrices
 from sklearn.decomposition import PCA
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+
+from pyef.logger import get_logger
+from pyef.timeframes import EnergyTimeFrame
 
 Regressor = Union[LinearRegression, GradientBoostingRegressor, RandomForestRegressor]
 

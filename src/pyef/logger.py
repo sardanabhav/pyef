@@ -3,7 +3,9 @@ this module should not exist
 """
 
 import logging
+
 from rich.logging import RichHandler
+
 from pyef._config import get_option
 
 

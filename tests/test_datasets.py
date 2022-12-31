@@ -1,7 +1,6 @@
 """ Tests for loading datasets. """
 
-import pytest
-from pyef.datasets import gefcom_load_2012, bigdeal_qualifying_2022, bigdeal_final_2022
+from pyef.datasets import bigdeal_final_2022, bigdeal_qualifying_2022, gefcom_load_2012
 
 
 def test_gefcom_load_2012_keys() -> None:

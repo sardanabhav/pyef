@@ -2,20 +2,22 @@
 Evaluator
 """
 
-import os
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
-from pyef.forecaster import Forecaster
-from pyef.timeframes import EnergyTimeFrame
-from pyef.logger import get_logger
 import math
-from typing import Dict, Union, Any
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+import os
 from datetime import datetime
-from memo import grid, Runner, memlist, memfile
-from pkg_resources import resource_filename
+from typing import Any, Dict, Union
+
 import numpy as np
+import pandas as pd
+from memo import Runner, grid, memfile
+from pkg_resources import resource_filename
+from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
+
+from pyef.forecaster import Forecaster
+from pyef.logger import get_logger
+from pyef.timeframes import EnergyTimeFrame
 
 Regressor = Union[LinearRegression, GradientBoostingRegressor, RandomForestRegressor]
 

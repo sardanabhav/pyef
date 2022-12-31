@@ -1,10 +1,12 @@
 """ Tests for timeframes. """
 
-import pytest
-import pandas as pd
-from pyef.timeframes import EnergyTimeFrame
-from pyef.datasets import gefcom_load_2012, bigdeal_final_2022, bigdeal_qualifying_2022
 from typing import Iterator
+
+import pandas as pd
+import pytest
+
+from pyef.datasets import bigdeal_final_2022, bigdeal_qualifying_2022, gefcom_load_2012
+from pyef.timeframes import EnergyTimeFrame
 
 
 # bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()

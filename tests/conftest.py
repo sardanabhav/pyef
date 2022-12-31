@@ -1,9 +1,10 @@
 """Configuration for the pytest test suite."""
 
-import pytest
-import pandas as pd
-from typing import Callable, Generator
 from itertools import product
+from typing import Generator
+
+import pandas as pd
+import pytest
 
 
 @pytest.fixture
