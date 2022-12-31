@@ -84,6 +84,7 @@ format = [
 ]
 maintain = [
     "git-changelog>=0.4",
+    "twine>=4.0.2",
 ]
 quality = [
     # TODO: remove once importlib-metadata version conflict is resolved
