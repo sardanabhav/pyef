@@ -83,4 +83,4 @@ jobs:
       run: pdm install --no-editable -G duty -G tests
 
     - name: Run the test suite
-      run: pdm run duty test
+      run: pdm run duty test_all
