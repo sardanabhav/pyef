@@ -19,3 +19,4 @@ __pypackages__/
 *.ipynb*
 .DS_Store
 .env
+pyrightconfig.json

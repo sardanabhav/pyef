@@ -11,7 +11,9 @@ from pyef.forecaster import Forecaster
 from pyef.timeframes import EnergyTimeFrame
 
 
-@pytest.mark.parametrize("data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()])
+@pytest.mark.parametrize(
+    "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
+)
 def test_lr(load_temperature: Iterator[dict[str, pd.DataFrame]]) -> None:
     for a in load_temperature:
         etf = EnergyTimeFrame(a["load"], a["temperature"])

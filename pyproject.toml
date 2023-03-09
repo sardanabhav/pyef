@@ -88,9 +88,8 @@ maintain = [
 ]
 quality = [
     # TODO: remove once importlib-metadata version conflict is resolved
-#    "importlib-metadata<5; python_version < '3.8'",
+    #    "importlib-metadata<5; python_version < '3.8'",
     "flake8>=4; python_version >= '3.8'",
-
     "darglint>=1.8",
     "flake8-bandit>=2.1",
     "flake8-black>=0.2",
@@ -104,6 +103,7 @@ quality = [
     "flake8-variables-names>=0.0",
     "pep8-naming>=0.12",
     "wps-light>=0.15",
+    "ruff>=0.0.254",
 ]
 tests = [
     "pytest>=6.2",
@@ -126,11 +126,11 @@ notebook = [
 ]
 
 [tool.black]
-line-length = 120
+line-length = 88
 exclude = "tests/fixtures"
 
 [tool.isort]
-line_length = 120
+line_length = 88
 not_skip = "__init__.py"
 multi_line_output = 3
 force_single_line = false
@@ -139,6 +139,12 @@ default_section = "THIRDPARTY"
 known_first_party = "pyef"
 include_trailing_comma = true
 
+[tool.ruff]
+# Decrease the maximum line length to 79 characters.
+line-length = 88
+# Support Python 3.10+.
+target-version = "py310"
+src = ["src", "tests"]
 
 [tool.mypy]
 files = ["src", "tests"]

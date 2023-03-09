@@ -20,6 +20,7 @@ logger = get_logger(__name__)
 
 
 class EnergyTimeFrame:
+
     """
     Class to preprocess load and temperature data to make it suitable
     for energy related time series forecasting.
@@ -58,14 +59,19 @@ class EnergyTimeFrame:
             self._clean_data()
 
             # add weather features
-            # TODO Move away from adding new features. Instead, use patsy to create these features
+            # TODO Move away from adding new features.
+            # Instead, use patsy to create these features
 
             self._add_dd()
             self._weather_series = self._add_polynomial(
                 self._weather_series, get_option("preprocessing.weather.pol_dict")
             )
-            self._weather_series = self._add_lags(self._weather_series, get_option("preprocessing.weather.lags_dict"))
-            self._weather_series = self._add_mas(self._weather_series, get_option("preprocessing.weather.mas_dict"))
+            self._weather_series = self._add_lags(
+                self._weather_series, get_option("preprocessing.weather.lags_dict")
+            )
+            self._weather_series = self._add_mas(
+                self._weather_series, get_option("preprocessing.weather.mas_dict")
+            )
 
             # create combined dataset
             self._create_feature_dataset()
@@ -83,9 +89,9 @@ class EnergyTimeFrame:
         return self._validated
 
     def _validate(self) -> None:
-        if self._validate_series(self._original_series["kwh_series"], "kwh") & self._validate_series(
-            self._original_series["weather_series"], "weather"
-        ):
+        if self._validate_series(
+            self._original_series["kwh_series"], "kwh"
+        ) & self._validate_series(self._original_series["weather_series"], "weather"):
             self._validated = True
         else:
             self._validated = False
@@ -93,20 +99,28 @@ class EnergyTimeFrame:
     def _validate_series(self, data: pd.DataFrame, series: str) -> bool:
         # Right now - this takes weather and kwh series with a valid DatetimeIndex
         # Check the column names
-        cols = list(data.filter(regex="|".join(get_option(f"preprocessing.{series}.accepted_columns"))).columns)
+        cols = list(
+            data.filter(
+                regex="|".join(get_option(f"preprocessing.{series}.accepted_columns"))
+            ).columns
+        )
 
         if data.index.inferred_type != "datetime64":
-            msg = f"Could not validate {series} series. Please make sure it has a valid DatetimeIndex"
+            msg = f"Could not validate {series} series. \
+                Please make sure it has a valid DatetimeIndex"
             logger.error(msg)
             return False
 
         # if ~ data.index.is_unique:
-        #     msg = f"Could not validate {series} series. Please make sure it has unique indices"
+        #     msg = f"Could not validate {series} series. \
+        #       Please make sure it has unique indices"
         #     logger.error(msg)
         #     return False
 
         if cols == []:
-            msg = f'Could not validate {series} series. Please make sure it includes one of {get_option(f"preprocessing.{series}.accepted_columns")} columns'
+            msg = f'Could not validate {series} series.\
+                Please make sure it includes one of \
+                {get_option(f"preprocessing.{series}.accepted_columns")} columns'
             logger.error(msg)
             return False
 
@@ -124,25 +138,35 @@ class EnergyTimeFrame:
 
     def _get_freq(self, df: pd.DataFrame) -> int:
         freqs, counts = np.unique(
-            np.array((df.index[1:] - df.index[:-1]).total_seconds() / 60).astype(int), return_counts=True
+            np.array((df.index[1:] - df.index[:-1]).total_seconds() / 60).astype(int),
+            return_counts=True,
         )
         if freqs.size == 1:
             # check if infered is equal to freq infered from pandas
-            pd_freq = int(pd.to_timedelta(to_offset(pd.infer_freq(df.index))).total_seconds() / 60)
+            pd_freq = int(
+                pd.to_timedelta(to_offset(pd.infer_freq(df.index))).total_seconds() / 60
+            )
             if pd_freq == freqs[0]:
                 return int(freqs[0])
             else:
-                # still return the infered freq, but set warn to true so that new index is created in cleaning
+                # still return the infered freq, but set warn to true so
+                # that new index is created in cleaning
                 logger.warning("Infered freq did not match pandas' infered freq.")
                 self._freq_warn = True
                 return int(freqs[0])
         elif freqs.size > 1:
             self._freq_warn = True
             logger.warning(
-                "Multiple frequencies found. This might be because of some missing timestamps within the series index."
+                "Multiple frequencies found. \
+                This might be because of some missing timestamps in the series index."
             )
-            logger.warning(f"Frequencies found: {freqs}\nTheir respective counts: {counts}")
-            logger.warning(f"Using freq: {freqs[np.argmax(counts)]} which has most counts {counts[np.argmax(counts)]}")
+            logger.warning(
+                f"Frequencies found: {freqs}\nTheir respective counts: {counts}"
+            )
+            logger.warning(
+                f"Using freq: {freqs[np.argmax(counts)]} \
+                which has most counts {counts[np.argmax(counts)]}"
+            )
             return int(freqs[np.argmax(counts)])
         else:
             logger.error(f"{freqs}, {counts}")
@@ -166,15 +190,22 @@ class EnergyTimeFrame:
 
     def _clean_data(self) -> None:
         # TODO Add a clean timestamp
-        # self._processing_data = pd.date_range(data.raw_data.index.min(), data.raw_data.index.max(), freq='15T')
+        # self._processing_data = pd.date_range(data.raw_data.index.min(),
+        #  data.raw_data.index.max(), freq='15T')
         if self._freq_warn:
-            logger.warning("Recreating the datetime index for both weather and kwh series")
+            logger.warning(
+                "Recreating the datetime index for both weather and kwh series"
+            )
             # add new datetime index based on infered freq
             kwh_index = pd.date_range(
-                self._kwh_series.index[0], end=self._kwh_series.index[-1], freq=f"{self.freq_kwh}min"
+                self._kwh_series.index[0],
+                end=self._kwh_series.index[-1],
+                freq=f"{self.freq_kwh}min",
             )
             weather_index = pd.date_range(
-                self._weather_series.index[0], end=self._weather_series.index[-1], freq=f"{self.freq_weather}min"
+                self._weather_series.index[0],
+                end=self._weather_series.index[-1],
+                freq=f"{self.freq_weather}min",
             )
             self._kwh_series = pd.DataFrame(index=kwh_index).merge(
                 self._kwh_series, left_index=True, right_index=True, how="left"
@@ -186,26 +217,38 @@ class EnergyTimeFrame:
             self._weather_series.index.name = "datetime"
 
         self._kwh_series = self._kwh_series.sort_index().interpolate(
-            method=get_option(f"preprocessing.kwh.fill_na"), limit_direction="forward", axis=0
+            method=get_option("preprocessing.kwh.fill_na"),
+            limit_direction="forward",
+            axis=0,
         )
         self._weather_series = self._weather_series.sort_index().interpolate(
-            method=get_option(f"preprocessing.weather.fill_na"), limit_direction="forward", axis=0
+            method=get_option("preprocessing.weather.fill_na"),
+            limit_direction="forward",
+            axis=0,
         )
 
         if self._weather_series.shape[0] != self._kwh_series.shape[0]:
-            # logger.warn("KWH and Weather series are not of the same length. Making them equal")
+            # logger.warn("KWH and Weather series are not of the same length.
+            # Making them equal")
             if self._weather_series.index.max() > self._kwh_series.index.max():
                 self._weather_series = self._weather_series.loc[
                     self._weather_series.index < self._kwh_series.index.max()
                 ]
             else:
-                self._kwh_series = self._kwh_series.loc[self._kwh_series.index < self._weather_series.index.max()]
+                self._kwh_series = self._kwh_series.loc[
+                    self._kwh_series.index < self._weather_series.index.max()
+                ]
 
     def _create_feature_dataset(self) -> None:
         self.feature_dataset = self._kwh_series.merge(
-            self._weather_series, how="left", left_on=self._kwh_series.index, right_on=self._weather_series.index
+            self._weather_series,
+            how="left",
+            left_on=self._kwh_series.index,
+            right_on=self._weather_series.index,
         )
-        self.feature_dataset = self.feature_dataset.rename(columns={"key_0": "datetime"}).fillna(method="bfill")
+        self.feature_dataset = self.feature_dataset.rename(
+            columns={"key_0": "datetime"}
+        ).fillna(method="bfill")
         self.feature_dataset.index = pd.to_datetime(self.feature_dataset["datetime"])
         # self.feature_dataset = self.feature_dataset.fillna('bfill')
 
@@ -229,10 +272,14 @@ class EnergyTimeFrame:
         # TODO update insert logicorget rid? for creating these in forecaster
         for col, lags in lags_dict.items():
             if isinstance(lags, int):
-                new_cols[f"{col}_lag_{lags}"] = df.loc[:, f"{col}"].shift(lags * int(60 / self._get_freq(df)))
+                new_cols[f"{col}_lag_{lags}"] = df.loc[:, f"{col}"].shift(
+                    lags * int(60 / self._get_freq(df))
+                )
             else:
                 for lag in lags:
-                    new_cols[f"{col}_lag_{lag}"] = df.loc[:, f"{col}"].shift(lag * int(60 / self._get_freq(df)))
+                    new_cols[f"{col}_lag_{lag}"] = df.loc[:, f"{col}"].shift(
+                        lag * int(60 / self._get_freq(df))
+                    )
 
         return pd.concat([df, pd.DataFrame(new_cols)], axis=1)
 
@@ -244,21 +291,27 @@ class EnergyTimeFrame:
         new_cols = {}
         # TODO update frequency
         # mas in days
-        mas_df = pd.DataFrame()
+        pd.DataFrame()
         for col, mas in mas_dict.items():
             if isinstance(mas, int):
                 new_cols[f"{col}_ma_{mas}"] = (
-                    df.loc[:, f"{col}"].rolling(24 * mas * int(60 / self._get_freq(df))).mean()
+                    df.loc[:, f"{col}"]
+                    .rolling(24 * mas * int(60 / self._get_freq(df)))
+                    .mean()
                 )
             else:
                 for ma in mas:
                     new_cols[f"{col}_ma_{ma}"] = (
-                        df.loc[:, f"{col}"].rolling(24 * ma * int(60 / self._get_freq(df))).mean()
+                        df.loc[:, f"{col}"]
+                        .rolling(24 * ma * int(60 / self._get_freq(df)))
+                        .mean()
                     )
 
         return pd.concat([df, pd.DataFrame(new_cols)], axis=1)
 
-    def _add_polynomial(self, df: pd.DataFrame, pol_dict: dict[str, int | list[int]]) -> pd.DataFrame:
+    def _add_polynomial(
+        self, df: pd.DataFrame, pol_dict: dict[str, int | list[int]]
+    ) -> pd.DataFrame:
         new_cols = {}
         for col, pol in pol_dict.items():
             if isinstance(pol, int):
@@ -270,14 +323,21 @@ class EnergyTimeFrame:
         return pd.concat([df, pd.DataFrame(new_cols)], axis=1)
 
     def _add_dd(self, method: str = "niave") -> None:
-        # self._weather_series = pd.concat([self._weather_series, pd.DataFrame(self._weather_series.index, columns=['datetime'])])
-        self._weather_series.insert(loc=0, column="datetime", value=self._weather_series.index)
+        # self._weather_series = pd.concat([self._weather_series, \
+        # pd.DataFrame(self._weather_series.index, columns=['datetime'])])
+        self._weather_series.insert(
+            loc=0, column="datetime", value=self._weather_series.index
+        )
         if method == "niave":
             daily_max_temp = pd.DataFrame(
-                self._weather_series.groupby(self._weather_series.index.date)[f"{self.temperature_col}"].max()
+                self._weather_series.groupby(self._weather_series.index.date)[
+                    f"{self.temperature_col}"
+                ].max()
             )
             daily_min_temp = pd.DataFrame(
-                self._weather_series.groupby(self._weather_series.index.date)[f"{self.temperature_col}"].min()
+                self._weather_series.groupby(self._weather_series.index.date)[
+                    f"{self.temperature_col}"
+                ].min()
             )
             daily_avg_temp = ((daily_max_temp + daily_min_temp) / 2).reset_index()
             daily_avg_temp.columns = ["datetime", "avg_temperature"]
@@ -288,7 +348,9 @@ class EnergyTimeFrame:
             )
         elif method == "daily_avg":
             daily_avg_temp = pd.DataFrame(
-                self._weather_series.groupby(self._weather_series.index.date)[f"{self.temperature_col}"].mean()
+                self._weather_series.groupby(self._weather_series.index.date)[
+                    f"{self.temperature_col}"
+                ].mean()
             ).reset_index()
             daily_avg_temp.columns = ["datetime", "avg_temperature"]
             df_merged = self._weather_series.merge(
@@ -304,12 +366,18 @@ class EnergyTimeFrame:
 
         df_merged.index = df_merged["datetime"]
         df_merged.loc[hdd_ref_remp - df_merged["avg_temperature"] >= 0, "hdd"] = (
-            hdd_ref_remp - df_merged.loc[hdd_ref_remp - df_merged["avg_temperature"] > 0, "avg_temperature"]
+            hdd_ref_remp
+            - df_merged.loc[
+                hdd_ref_remp - df_merged["avg_temperature"] > 0, "avg_temperature"
+            ]
         )
         df_merged.loc[hdd_ref_remp - df_merged["avg_temperature"] < 0, "hdd"] = 0
 
         df_merged.loc[df_merged["avg_temperature"] - cdd_ref_remp >= 0, "cdd"] = (
-            cdd_ref_remp - df_merged.loc[df_merged["avg_temperature"] - cdd_ref_remp > 0, "avg_temperature"]
+            cdd_ref_remp
+            - df_merged.loc[
+                df_merged["avg_temperature"] - cdd_ref_remp > 0, "avg_temperature"
+            ]
         )
         df_merged.loc[df_merged["avg_temperature"] - cdd_ref_remp < 0, "cdd"] = 0
 

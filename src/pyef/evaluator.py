@@ -13,7 +13,11 @@ from memo import Runner, grid, memfile
 from pkg_resources import resource_filename
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+)
 
 from pyef.forecaster import Forecaster
 from pyef.logger import get_logger
@@ -29,14 +33,18 @@ class Evaluator:
     def __init__(self, forecaster: Forecaster) -> None:
         self.forecaster = forecaster
         if not self.forecaster.predicted:
-            logger.error(f"model not trained. Please call forecaster <obj>.train before calling evaluator class")
+            logger.error(
+                "model not trained.\
+                Please call forecaster <obj>.train before calling evaluator class"
+            )
             raise NotImplementedError
         self.in_sample()
         self.out_of_sample()
 
     def in_sample(self) -> None:
         self.in_sample_metrics = self.calculate_metrics(
-            self.forecaster.pred_in_sample["actuals"], self.forecaster.pred_in_sample["forecast"]
+            self.forecaster.pred_in_sample["actuals"],
+            self.forecaster.pred_in_sample["forecast"],
         )
 
     def out_of_sample(self) -> None:
@@ -51,7 +59,9 @@ class Evaluator:
         error.loc[(error["hour"] >= 2), "weight"] = 2
         return np.clip(error["hour"] * error["weight"], a_max=10, a_min=None).sum()
 
-    def calculate_metrics(self, y_true: pd.DataFrame, y_pred: pd.DataFrame) -> Dict[str, float]:
+    def calculate_metrics(
+        self, y_true: pd.DataFrame, y_pred: pd.DataFrame
+    ) -> Dict[str, float]:
         mape = mean_absolute_percentage_error(y_true, y_pred)
         mae = mean_absolute_error(y_true, y_pred)
         rmse = math.sqrt(mean_squared_error(y_true, y_pred))
@@ -89,13 +99,23 @@ class ModelGridSearch:
                 for j, pred_start in enumerate(self.pred_start_dates):
                     logger.debug(f"pred start date: {pred_start}")
                     forecast = Forecaster(
-                        data=self.data, formula=M, model=model, pred_start=pred_start, horizon=self.horizon
+                        data=self.data,
+                        formula=M,
+                        model=model,
+                        pred_start=pred_start,
+                        horizon=self.horizon,
                     )
                     forecast.get_forecast()
                     if self.save_plots:
                         fig1, fig2 = forecast.plot()
                         plots.append(
-                            {"out_of_sample": fig1, "in_sample": fig2, "M": i, "model": model.__str__(), "CV": j}
+                            {
+                                "out_of_sample": fig1,
+                                "in_sample": fig2,
+                                "M": i,
+                                "model": model.__str__(),
+                                "CV": j,
+                            }
                         )
 
                     metrics = Evaluator(forecaster=forecast)
@@ -118,12 +138,22 @@ class ModelGridSearch:
         self,
     ) -> None:
         for model in self.models:
+            model_name = model.__str__().replace("(", "").replace(")", "")
 
             @memfile(
-                filepath=f'{self.file_path}/result_{model.__str__().replace("(", "").replace(")", "")}.jsonl', skip=True
+                filepath=f"{self.file_path}/result_{model_name}.jsonl",
+                skip=True,
             )
-            def _execute_model(M: str, pred_start: datetime, horizon: int) -> dict[str, float]:
-                forecast = Forecaster(data=self.data, formula=M, model=model, pred_start=pred_start, horizon=horizon)
+            def _execute_model(
+                M: str, pred_start: datetime, horizon: int
+            ) -> dict[str, float]:
+                forecast = Forecaster(
+                    data=self.data,
+                    formula=M,
+                    model=model,
+                    pred_start=pred_start,
+                    horizon=horizon,
+                )
                 forecast.get_forecast()
                 if self.save_plots:
                     prediction = forecast.pred.copy()
@@ -131,7 +161,8 @@ class ModelGridSearch:
                     prediction["model"] = f"{model.__str__()}"
                     prediction["pred_start"] = pred_start
                     prediction.to_csv(
-                        f'{self.file_path}/predictions{model.__str__().replace("(", "").replace(")", "")}.csv', mode="a"
+                        f"{self.file_path}/predictions{model_name}.csv",
+                        mode="a",
                     )
                 metrics = Evaluator(forecaster=forecast)
                 return {
@@ -139,7 +170,11 @@ class ModelGridSearch:
                     "mape_in_sample": metrics.in_sample_metrics["mape"],
                 }
 
-            settings = grid(M=self.formulae, pred_start=self.pred_start_dates, horizon=[self.horizon])
+            settings = grid(
+                M=self.formulae,
+                pred_start=self.pred_start_dates,
+                horizon=[self.horizon],
+            )
             runner = Runner(backend="loky", n_jobs=self.n_jobs)
             runner.run(func=_execute_model, settings=settings, progbar=True)
 

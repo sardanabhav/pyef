@@ -8,8 +8,12 @@ import pytest
 
 
 @pytest.fixture
-def load_temperature(data: dict[str, pd.DataFrame]) -> Generator[dict[str, pd.DataFrame], None, None]:
-    def _load_temperature_gen(data: dict[str, pd.DataFrame]) -> Generator[dict[str, pd.DataFrame], None, None]:
+def load_temperature(
+    data: dict[str, pd.DataFrame]
+) -> Generator[dict[str, pd.DataFrame], None, None]:
+    def _load_temperature_gen(
+        data: dict[str, pd.DataFrame]
+    ) -> Generator[dict[str, pd.DataFrame], None, None]:
         load = data["load"]
         temperature = data["temperature"]
         zones = load["zone_id"].unique()

@@ -4,8 +4,12 @@ from optioneer import Optioneer
 
 options_maker = Optioneer()
 
-options_maker.register_option("logging_level", logging.INFO, doc="Infer type of series automatically")
-options_maker.register_option("preprocessing.infer_types", True, doc="Infer type of series automatically")
+options_maker.register_option(
+    "logging_level", logging.INFO, doc="Infer type of series automatically"
+)
+options_maker.register_option(
+    "preprocessing.infer_types", True, doc="Infer type of series automatically"
+)
 options_maker.register_option(
     "preprocessing.infer_frequency",
     True,
@@ -17,7 +21,9 @@ options_maker.register_option(
     doc="acceptable column name can contain either of these strings",
 )
 options_maker.register_option(
-    "preprocessing.kwh.fill_na", "linear", doc="method with which nas are handeled in kwh series"
+    "preprocessing.kwh.fill_na",
+    "linear",
+    doc="method with which nas are handeled in kwh series",
 )
 options_maker.register_option(
     "preprocessing.weather.accepted_columns",
@@ -25,10 +31,16 @@ options_maker.register_option(
     doc="acceptable column name can contain either of these strings",
 )
 options_maker.register_option(
-    "preprocessing.weather.fill_na", "linear", doc="method with which nas are handeled in kwh series"
+    "preprocessing.weather.fill_na",
+    "linear",
+    doc="method with which nas are handeled in kwh series",
 )
-options_maker.register_option("preprocessing.weather.hdd_ref", 58, doc="reference temperature for hdd")
-options_maker.register_option("preprocessing.weather.cdd_ref", 70, doc="reference temperature for cdd")
+options_maker.register_option(
+    "preprocessing.weather.hdd_ref", 58, doc="reference temperature for hdd"
+)
+options_maker.register_option(
+    "preprocessing.weather.cdd_ref", 70, doc="reference temperature for cdd"
+)
 options_maker.register_option(
     "preprocessing.weather.pol_dict",
     {"temperature": [2, 3], "hdd": [2, 3], "cdd": [2, 3]},
@@ -46,7 +58,11 @@ options_maker.register_option(
 )
 options_maker.register_option(
     "preprocessing.weather.mas_dict",
-    {"temperature": list(range(1, 8)), "temperature_2": list(range(1, 8)), "temperature_3": list(range(1, 8))},
+    {
+        "temperature": list(range(1, 8)),
+        "temperature_2": list(range(1, 8)),
+        "temperature_3": list(range(1, 8)),
+    },
     doc="used for _add_mas() in ETF",
 )
 

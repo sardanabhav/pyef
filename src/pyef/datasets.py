@@ -18,10 +18,14 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     melt_cols = ["year", "month", "day"]
     filepath = resource_filename("pyef", os.path.join("data", "gefcom2012", "load"))
     load_history = pd.read_csv(f"{filepath}/Load_history.csv", thousands=",")
-    load_solution = pd.read_csv(f"{filepath}/Load_solution.csv", thousands=",").drop(["weight", "id"], axis=1)
+    load_solution = pd.read_csv(f"{filepath}/Load_solution.csv", thousands=",").drop(
+        ["weight", "id"], axis=1
+    )
 
     def convert_to_ts(df_load: pd.DataFrame) -> pd.DataFrame:
-        df_load = pd.melt(df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load")
+        df_load = pd.melt(
+            df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load"
+        )
         df_load["hour"] = df_load["hour"].str.replace("h", "")
         df_load["hour"] = df_load["hour"].apply(lambda x: int(x))
         df_load["datetime"] = pd.to_datetime(df_load[["year", "month", "day", "hour"]])
@@ -41,11 +45,16 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     df_temperature_1 = pd.read_csv(f"{filepath}/temperature_history.csv")
 
     df_temperature_1 = pd.melt(
-        df_temperature_1, id_vars=["station_id"] + melt_cols, var_name="hour", value_name="temperature"
+        df_temperature_1,
+        id_vars=["station_id"] + melt_cols,
+        var_name="hour",
+        value_name="temperature",
     )
     df_temperature_1["hour"] = df_temperature_1["hour"].str.replace("h", "")
     df_temperature_1["hour"] = df_temperature_1["hour"].apply(lambda x: int(x))
-    df_temperature_1["datetime"] = pd.to_datetime(df_temperature_1[["year", "month", "day", "hour"]])
+    df_temperature_1["datetime"] = pd.to_datetime(
+        df_temperature_1[["year", "month", "day", "hour"]]
+    )
     df_temperature_1 = df_temperature_1.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_1 = df_temperature_1.set_index("datetime")
 
@@ -55,7 +64,9 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
         .rename(columns={"T0_p1": "temperature"})
     )
 
-    df_temperature_2["datetime"] = pd.to_datetime(df_temperature_2[["year", "month", "day", "hour"]])
+    df_temperature_2["datetime"] = pd.to_datetime(
+        df_temperature_2[["year", "month", "day", "hour"]]
+    )
     df_temperature_2 = df_temperature_2.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_2 = df_temperature_2.set_index("datetime")
 
@@ -76,7 +87,9 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
         dict[str, pd.DataFrame]: _description_
     """
 
-    filepath = resource_filename("pyef", os.path.join("data", "bigdeal2022", "qualifying_match"))
+    filepath = resource_filename(
+        "pyef", os.path.join("data", "bigdeal2022", "qualifying_match")
+    )
 
     data = pd.read_csv(f"{filepath}/data_round_1.csv")
     data.columns = data.columns.str.lower()
@@ -102,7 +115,9 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
     df_temperature_4.columns = ["temperature"]
     df_temperature_4["station_id"] = 4
 
-    df_temperature = pd.concat([df_temperature_1, df_temperature_2, df_temperature_3, df_temperature_4])
+    df_temperature = pd.concat(
+        [df_temperature_1, df_temperature_2, df_temperature_3, df_temperature_4]
+    )
 
     return {"load": df_load, "temperature": df_temperature}
 
@@ -114,7 +129,9 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
         dict[str, pd.DataFrame]: _description_
     """
 
-    filepath = resource_filename("pyef", os.path.join("data", "bigdeal2022", "final_match"))
+    filepath = resource_filename(
+        "pyef", os.path.join("data", "bigdeal2022", "final_match")
+    )
 
     data = pd.read_csv(f"{filepath}/final_match.csv")
     data.columns = data.columns.str.lower()
@@ -212,4 +229,8 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
         ]
     )
 
-    return {"load": df_load, "temperature": df_temperature, "temperature_forecast": df_temperature_forecast}
+    return {
+        "load": df_load,
+        "temperature": df_temperature,
+        "temperature_forecast": df_temperature_forecast,
+    }

@@ -47,7 +47,7 @@ def update_changelog(
     Arguments:
         inplace_file: The file to update in-place.
         marker: The line after which to insert new contents.
-        version_regex: A regular expression to find currently documented versions in the file.
+        version_regex: A regex to find currently documented versions in the file.
         template_url: The URL to the Jinja template used to render contents.
     """
     from git_changelog.build import Changelog
@@ -66,7 +66,9 @@ def update_changelog(
             planned_tag = "0.1.0"
             last_version.tag = planned_tag
             last_version.url += planned_tag
-            last_version.compare_url = last_version.compare_url.replace("HEAD", planned_tag)
+            last_version.compare_url = last_version.compare_url.replace(
+                "HEAD", planned_tag
+            )
 
     with open(inplace_file, "r") as changelog_file:
         lines = changelog_file.read().splitlines()
@@ -123,7 +125,11 @@ def check_quality(ctx, files=PY_SRC):
         ctx: The context instance (passed automatically).
         files: The files to check.
     """
-    ctx.run(f"flake8 --config=config/flake8.ini {files}", title="Checking code quality", pty=PTY)
+    ctx.run(
+        f"flake8 --config=config/flake8.ini {files}",
+        title="Checking code quality",
+        pty=PTY,
+    )
 
 
 @duty
@@ -196,7 +202,9 @@ def check_types(ctx):  # noqa: WPS231
     Arguments:
         ctx: The context instance (passed automatically).
     """
-    ctx.run(f"mypy --config-file pyproject.toml {PY_SRC}", title="Type-checking", pty=PTY)
+    ctx.run(
+        f"mypy --config-file pyproject.toml {PY_SRC}", title="Type-checking", pty=PTY
+    )
 
 
 @duty(silent=True)
@@ -241,7 +249,9 @@ def docs_serve(ctx, host="127.0.0.1", port=8000):
         host: The host to serve the docs from.
         port: The port to serve the docs on.
     """
-    ctx.run(f"mkdocs serve -a {host}:{port}", title="Serving documentation", capture=False)
+    ctx.run(
+        f"mkdocs serve -a {host}:{port}", title="Serving documentation", capture=False
+    )
 
 
 @duty
@@ -282,13 +292,19 @@ def release(ctx, version):
         version: The new version number to use.
     """
     ctx.run("git add pyproject.toml CHANGELOG.md", title="Staging files", pty=PTY)
-    ctx.run(["git", "commit", "-m", f"chore: Prepare release {version}"], title="Committing changes", pty=PTY)
+    ctx.run(
+        ["git", "commit", "-m", f"chore: Prepare release {version}"],
+        title="Committing changes",
+        pty=PTY,
+    )
     ctx.run(f"git tag {version}", title="Tagging commit", pty=PTY)
     if not TESTING:
         ctx.run("git push", title="Pushing commits", pty=False)
         ctx.run("git push --tags", title="Pushing tags", pty=False)
         ctx.run("pdm build", title="Building dist/wheel", pty=PTY)
-        ctx.run("twine upload --skip-existing dist/*", title="Publishing version", pty=PTY)
+        ctx.run(
+            "twine upload --skip-existing dist/*", title="Publishing version", pty=PTY
+        )
         docs_deploy.run()
 
 
