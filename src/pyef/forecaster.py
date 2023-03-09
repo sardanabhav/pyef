@@ -283,11 +283,11 @@ class Forecaster:
     #                      (df_split.index < self.pred_end), :]
     #     return df_train, df_test
 
-    def plot(self) -> Tuple[Any, Any]:
+    def plot(self) -> dict[str, Any]:
         if self.predicted:
             fig_out_of_sample = self.pred.plot()
             fig_in_sample = self.pred_in_sample.plot()
-            return fig_out_of_sample, fig_in_sample
+            return {"out_of_sample": fig_out_of_sample, "in_sample": fig_in_sample}
         else:
             logger.warn("Prediction not made. call get_forecast")
-            return None, None
+            return {"out_of_sample": None, "in_sample": None}
