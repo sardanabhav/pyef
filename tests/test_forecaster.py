@@ -14,8 +14,31 @@ from pyef.timeframes import EnergyTimeFrame
 @pytest.mark.parametrize(
     "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
 )
-def test_lr(load_temperature: Iterator[dict[str, pd.DataFrame]]) -> None:
-    for a in load_temperature:
+def test_lr_sample(load_temperature_sample: Iterator[dict[str, pd.DataFrame]]) -> None:
+    for a in load_temperature_sample:
+        etf = EnergyTimeFrame(a["load"], a["temperature"])
+
+        forecaster = Forecaster(
+            data=etf,
+            formula="load ~ C(month) + C(hour) + C(day_of_week) + temperature",
+            model=LinearRegression(),
+            pred_start=etf.feature_dataset.tail(8760).head(1).index[0],
+            horizon=8760,
+        )
+
+        forecaster.get_forecast()
+        print(forecaster.pred)
+        assert forecaster.pred.shape[0] == 8760
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
+)
+def test_lr_complete(
+    load_temperature_complete: Iterator[dict[str, pd.DataFrame]]
+) -> None:
+    for a in load_temperature_complete:
         etf = EnergyTimeFrame(a["load"], a["temperature"])
 
         forecaster = Forecaster(

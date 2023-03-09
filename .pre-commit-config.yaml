@@ -8,6 +8,12 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    # Ruff version.
+    rev: 'v0.0.254'
+    hooks:
+    -   id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
 -   repo: https://github.com/psf/black
     rev: 22.12.0 # 21.10b0 # Replace by any tag/version: https://github.com/psf/black/tags
     hooks:

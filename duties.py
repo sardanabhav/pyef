@@ -92,7 +92,8 @@ def changelog(ctx):
         ctx: The context instance (passed automatically).
     """
     commit = "166758a98d5e544aaa94fda698128e00733497f4"
-    template_url = f"https://raw.githubusercontent.com/pawamoy/jinja-templates/{commit}/keepachangelog.md"
+    base_url = "https://raw.githubusercontent.com/pawamoy"
+    template_url = f"{base_url}/jinja-templates/{commit}/keepachangelog.md"
     ctx.run(
         update_changelog,
         kwargs={
@@ -333,7 +334,18 @@ def test(ctx, match: str = ""):
     py_version = f"{sys.version_info.major}{sys.version_info.minor}"
     os.environ["COVERAGE_FILE"] = f".coverage.{py_version}"
     ctx.run(
-        ["pytest", "-c", "config/pytest.ini", "-n", "auto", "-k", match, "tests"],
+        [
+            "pytest",
+            "-c",
+            "config/pytest.ini",
+            "-n",
+            "auto",
+            "-k",
+            match,
+            "-m",
+            "not slow",
+            "tests",
+        ],
         title="Running tests",
         pty=PTY,
     )
