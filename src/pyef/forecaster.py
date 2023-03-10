@@ -9,7 +9,6 @@ from typing import Any, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from dateutil.relativedelta import relativedelta
 from patsy import dmatrices
 from sklearn.decomposition import PCA
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
@@ -33,6 +32,7 @@ class Forecaster:
         pred_start: datetime,
         fit_values: bool = False,
         horizon: int = 24,
+        max_history: str = "36M",
         wieghed: bool = False,
         log_target: bool = False,
         pca: bool = False,
@@ -42,6 +42,7 @@ class Forecaster:
         if self.data.validated:
             self.feature_dataset = self.data.feature_dataset.copy(deep=True)
             self.formula = formula
+            self._validate_max_history(max_history)
             self.model = model
             self.pred_start = pred_start
             self.fit_values = fit_values
@@ -55,6 +56,14 @@ class Forecaster:
         self.trained = False
         self.predicted = False
         logger.debug("forecaster initiated")
+
+    def _validate_max_history(self, max_history: str) -> None:
+        # TODO Need to fix MS/M freq
+        try:
+            self.max_history = pd.tseries.frequencies.to_offset(max_history)
+        except ValueError:
+            logger.warning(f"invalid value for max_history {max_history}. Using 36M")
+            self.max_history = pd.tseries.frequencies.to_offset("36M")
 
     def get_forecast(self) -> None:
         if not self.data.validated:
@@ -262,9 +271,8 @@ class Forecaster:
 
     def _split_data(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         df_split = df.copy(deep=True)
-        # TODO make relativedelta configurable
         df_train = df_split.loc[
-            (df_split.index >= self.pred_start - relativedelta(years=3))
+            (df_split.index >= self.pred_start - self.max_history)
             & (df_split.index < self.pred_start),
             :,
         ]
