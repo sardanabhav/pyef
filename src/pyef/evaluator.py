@@ -24,7 +24,6 @@ from pyef.timeframes import EnergyTimeFrame
 
 Regressor = Union[LinearRegression, GradientBoostingRegressor, RandomForestRegressor]
 
-
 logger = get_logger(__name__)
 
 
@@ -144,7 +143,7 @@ class ModelGridSearch:
         self,
     ) -> None:
         if self.result_dir is None:
-            results = []
+            results: list[dict[str, Any]] = []
             memodecorator = memlist(data=results)
         else:
             pathlib.Path(
@@ -162,7 +161,7 @@ class ModelGridSearch:
         @memodecorator
         def _execute_model(
             M: str, model: Regressor, pred_start: datetime, horizon: int
-        ) -> dict[str, float]:
+        ) -> dict[str, dict[str, float]]:
             model_name = model.__str__().replace("(", "").replace(")", "")
             forecast = Forecaster(
                 data=self.data,
