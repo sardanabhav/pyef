@@ -10,7 +10,6 @@ from typing import Any, Dict, Union
 import numpy as np
 import pandas as pd
 from memo import Runner, grid, memfile
-from pkg_resources import resource_filename
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import (
@@ -86,7 +85,7 @@ class ModelGridSearch:
         self.save_plots = save_plots
         self.horizon = horizon
         self.n_jobs = n_jobs
-        self.file_path = resource_filename("pyef", os.path.join("data", "bigdeal2022"))
+        self.file_path = os.path.join("data", "bigdeal2022")
 
     def _search(self) -> None:
         out_of_sample = []

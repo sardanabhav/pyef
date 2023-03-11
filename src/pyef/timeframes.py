@@ -253,14 +253,35 @@ class EnergyTimeFrame:
         # self.feature_dataset = self.feature_dataset.fillna('bfill')
 
     @property
-    def temperature_col(self) -> str:
+    def temperature_col(self) -> str | None:
+        self._temperature_col = self.infered_series_col(series="weather")
+        return self._temperature_col
+
+    @temperature_col.setter
+    def temperature_col(self, value: str) -> None:
+        self._temperature_col = value
+
+    def infered_series_col(self, series: str) -> str | None:
         # TODO update this to dynamically read the series and get temperature columns
-        return "temperature"
+        accepted_cols = get_option(f"preprocessing.{series}.accepted_columns")
+        series_cols = self.original_series[f"{series}_series"].columns
+        infered_series_cols: list[str] = list(
+            set(series_cols).intersection(set(accepted_cols))
+        )
+        if len(infered_series_cols) == 1:
+            return infered_series_cols[0]
+        else:
+            logger.warning(f"Could not infer {series} column. Please set this manually")
+            return None
 
     @property
-    def target_col(self) -> str:
-        # TODO update this to dynamically read the series and get temperature columns
-        return "load"
+    def target_col(self) -> str | None:
+        self._target_col = self.infered_series_col(series="kwh")
+        return self._target_col
+
+    @target_col.setter
+    def target_col(self, value: str) -> None:
+        self._target_col = value
 
     def _add_lags(
         self,
@@ -269,7 +290,7 @@ class EnergyTimeFrame:
     ) -> pd.DataFrame:
         new_cols = {}
         # TODO update frequency
-        # TODO update insert logicorget rid? for creating these in forecaster
+        # TODO update insert logic or get rid? for creating these in forecaster
         for col, lags in lags_dict.items():
             if isinstance(lags, int):
                 new_cols[f"{col}_lag_{lags}"] = df.loc[:, f"{col}"].shift(

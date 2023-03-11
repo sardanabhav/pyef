@@ -20,3 +20,4 @@ __pypackages__/
 .DS_Store
 .env
 pyrightconfig.json
+.ruff*

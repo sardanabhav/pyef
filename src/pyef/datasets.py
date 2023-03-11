@@ -1,7 +1,7 @@
 import os
 
 import pandas as pd
-from pkg_resources import resource_filename
+import importlib_resources
 
 
 def gefcom_load_2012() -> dict[str, pd.DataFrame]:
@@ -13,14 +13,14 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     TODO add examples
 
     """
-
     # TODO fix hour - hour ending (only change 24th hour to 0)
     melt_cols = ["year", "month", "day"]
-    filepath = resource_filename("pyef", os.path.join("data", "gefcom2012", "load"))
-    load_history = pd.read_csv(f"{filepath}/Load_history.csv", thousands=",")
-    load_solution = pd.read_csv(f"{filepath}/Load_solution.csv", thousands=",").drop(
-        ["weight", "id"], axis=1
-    )
+    ref = importlib_resources.files("pyef") / os.path.join("data", "gefcom2012", "load")
+    with importlib_resources.as_file(ref) as filepath:
+        load_history = pd.read_csv(f"{filepath}/Load_history.csv", thousands=",")
+        load_solution = pd.read_csv(
+            f"{filepath}/Load_solution.csv", thousands=","
+        ).drop(["weight", "id"], axis=1)
 
     def convert_to_ts(df_load: pd.DataFrame) -> pd.DataFrame:
         df_load = pd.melt(
@@ -87,11 +87,12 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
         dict[str, pd.DataFrame]: _description_
     """
 
-    filepath = resource_filename(
-        "pyef", os.path.join("data", "bigdeal2022", "qualifying_match")
+    ref = importlib_resources.files("pyef") / os.path.join(
+        "data", "bigdeal2022", "qualifying_match"
     )
+    with importlib_resources.as_file(ref) as filepath:
+        data = pd.read_csv(f"{filepath}/data_round_1.csv")
 
-    data = pd.read_csv(f"{filepath}/data_round_1.csv")
     data.columns = data.columns.str.lower()
     data["datetime"] = pd.to_datetime(data[["year", "month", "day", "hour"]])
     data.index = data["datetime"]
@@ -129,11 +130,12 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
         dict[str, pd.DataFrame]: _description_
     """
 
-    filepath = resource_filename(
-        "pyef", os.path.join("data", "bigdeal2022", "final_match")
+    ref = importlib_resources.files("pyef") / os.path.join(
+        "data", "bigdeal2022", "final_match"
     )
+    with importlib_resources.as_file(ref) as filepath:
+        data = pd.read_csv(f"{filepath}/final_match.csv")
 
-    data = pd.read_csv(f"{filepath}/final_match.csv")
     data.columns = data.columns.str.lower()
     data.index = pd.to_datetime(data["date"])
     data.index += pd.TimedeltaIndex(data["hour"], unit="h")

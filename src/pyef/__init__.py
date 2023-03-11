@@ -8,5 +8,12 @@ Energy Forecasting Toolkit in Python
 from pyef.timeframes import EnergyTimeFrame
 from pyef.forecaster import Forecaster
 from pyef.evaluator import Evaluator, ModelGridSearch
+from pyef._config import options
 
-__all__: list[str] = ["EnergyTimeFrame", "Forecaster", "Evaluator", "ModelGridSearch"]
+__all__: list[str] = [
+    "EnergyTimeFrame",
+    "Forecaster",
+    "Evaluator",
+    "ModelGridSearch",
+    "options",
+]

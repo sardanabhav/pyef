@@ -36,6 +36,7 @@ dependencies = [
     "rich>=12.6.0",
     "patsy>=0.5.3",
     "memo>=0.2.3",
+    "importlib-resources>=5.12.0",
 ]
 
 [project.urls]
@@ -87,8 +88,7 @@ maintain = [
     "twine>=4.0.2",
 ]
 quality = [
-    # TODO: remove once importlib-metadata version conflict is resolved
-    #    "importlib-metadata<5; python_version < '3.8'",
+
     "flake8>=4; python_version >= '3.8'",
     "darglint>=1.8",
     "flake8-bandit>=2.1",
@@ -124,6 +124,8 @@ security = ["safety>=2"]
 notebook = [
     "ipykernel>=6.19.4",
     "jupyter>=1.0.0",
+    "notebook>=6.5.3",
+    "pyzmq>=25.0.0",
 ]
 
 [tool.black]
@@ -144,7 +146,7 @@ include_trailing_comma = true
 # Decrease the maximum line length to 79 characters.
 line-length = 88
 # Support Python 3.10+.
-target-version = "py310"
+target-version = "py311"
 src = ["src", "tests"]
 
 [tool.mypy]

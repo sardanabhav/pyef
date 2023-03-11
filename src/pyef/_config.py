@@ -13,7 +13,8 @@ options_maker.register_option(
 options_maker.register_option(
     "preprocessing.infer_frequency",
     True,
-    doc="Infer frequency of series automatically, if false, need to set freq explicitly",
+    doc="Infer frequency of series automatically.\
+        if false, need to set freq explicitly",
 )
 options_maker.register_option(
     "preprocessing.kwh.accepted_columns",
@@ -69,30 +70,3 @@ options_maker.register_option(
 options = options_maker.options
 get_option = options_maker.get_option
 set_option = options_maker.set_option
-
-# options = {
-#     'preprocessing': {
-#         'infer_types': True, # automatically tag series in timeframes as usage/wind/solar/weather
-#         'infer_frequency': True,
-#         'kwh': {
-#             'accepted_columns': ['usage', 'solar', 'wind', 'kwh'],
-#             'fill_nan': 'drop',
-#             'sample_down': 'drop'
-#             },
-#         'weather': {
-#             'accepted_columns': ['usage', 'solar', 'wind', 'kwh'],
-#             'sample_up': 'bfill',
-#             'sample_down': 'mean',
-#             'fill_nan': 0.0,
-#             'fill_before': 'mean',
-#             'fill_after': 'mean'
-#             },
-
-#     },
-#     'forecasting': {
-
-#     },
-#     'postprocessing': {
-
-#     }
-# }
