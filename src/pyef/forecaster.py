@@ -92,9 +92,11 @@ class Forecaster:
         try:
             # logger.debug(f"train features = {list(self.X_train.columns)}")
             if not self.wieghed:
-                self.model.fit(X=self.X_train, y=target)
+                self.model.fit(X=self.X_train, y=target.values.ravel())
             else:
-                self.model.fit(X=self.X_train, y=target, sample_weight=self.wieghts)
+                self.model.fit(
+                    X=self.X_train, y=target.values.ravel(), sample_weight=self.wieghts
+                )
             self.trained = True
         except Exception as e:
             logger.error(f"Could not train the model \n{e}")
@@ -161,11 +163,13 @@ class Forecaster:
             try:
                 # logger.debug(f"train features = {list(self.X_train.columns)}")
                 if not self.wieghed:
-                    self.model.fit(X=group, y=target_group.get_group(name))
+                    self.model.fit(
+                        X=group, y=target_group.get_group(name).values.ravel()
+                    )
                 else:
                     self.model.fit(
                         X=group,
-                        y=target_group.get_group(name),
+                        y=target_group.get_group(name).values.ravel(),
                         sample_weight=wieght_group.get_group(name),
                     )
                 self.trained = True

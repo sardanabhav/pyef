@@ -21,3 +21,4 @@ __pypackages__/
 .env
 pyrightconfig.json
 .ruff*
+.jupyter/

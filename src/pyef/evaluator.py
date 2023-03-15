@@ -20,6 +20,7 @@ from sklearn.metrics import (
 
 from pyef.forecaster import Forecaster
 from pyef.logger import get_logger
+from pyef._config import get_option
 from pyef.timeframes import EnergyTimeFrame
 
 Regressor = Union[LinearRegression, GradientBoostingRegressor, RandomForestRegressor]
@@ -146,13 +147,12 @@ class ModelGridSearch:
             results: list[dict[str, Any]] = []
             memodecorator = memlist(data=results)
         else:
-            pathlib.Path(
-                pathlib.Path.home().joinpath(".config", "pyef", "logs", self.result_dir)
-            ).mkdir(parents=True, exist_ok=True)
-            self.file_path = pathlib.Path.home().joinpath(
-                ".config", "pyef", "logs", self.result_dir
+            self.file_path = pathlib.Path(
+                get_option("log_dir").joinpath(self.result_dir)
             )
-            results_file = f"{self.file_path}/results.jsonl"
+            self.file_path.mkdir(parents=True, exist_ok=True)
+            results_file = self.file_path.joinpath("results.jsonl")
+            # f"{self.file_path}/results.jsonl"
             memodecorator = memfile(
                 filepath=results_file,
                 skip=True,
