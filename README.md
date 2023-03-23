@@ -3,8 +3,9 @@
 [![ci](https://github.com/sardanabhav/pyef/workflows/ci/badge.svg)](https://github.com/sardanabhav/pyef/actions?query=workflow%3Aci)
 [![documentation](https://img.shields.io/badge/docs-mkdocs%20material-blue.svg?style=flat)](https://sardanabhav.github.io/pyef/)
 [![pypi version](https://img.shields.io/pypi/v/pyef.svg)](https://pypi.org/project/pyef/)
-[![gitpod](https://img.shields.io/badge/gitpod-workspace-blue.svg?style=flat)](https://gitpod.io/#https://github.com/sardanabhav/pyef)
-[![gitter](https://badges.gitter.im/join%20chat.svg)](https://gitter.im/pyef/community)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sardanabhav/pyef/main.svg)](https://results.pre-commit.ci/latest/github/sardanabhav/pyef/main)
+<!-- [![gitpod](https://img.shields.io/badge/gitpod-workspace-blue.svg?style=flat)](https://gitpod.io/#https://github.com/sardanabhav/pyef)
+[![gitter](https://badges.gitter.im/join%20chat.svg)](https://gitter.im/pyef/community) -->
 
 Energy Forecasting Toolkit in Python
 This is a work in progress. Do not use
