@@ -22,3 +22,5 @@ __pypackages__/
 pyrightconfig.json
 .ruff*
 .jupyter/
+*/*.csv
+*/*/*/*/*.csv

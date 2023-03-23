@@ -17,9 +17,9 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     melt_cols = ["year", "month", "day"]
     ref = importlib_resources.files("pyef") / os.path.join("data", "gefcom2012", "load")
     with importlib_resources.as_file(ref) as filepath:
-        load_history = pd.read_csv(f"{filepath}/Load_history.csv", thousands=",")
+        load_history = pd.read_csv(f"{filepath}/Load_history.csv.zip", thousands=",")
         load_solution = pd.read_csv(
-            f"{filepath}/Load_solution.csv", thousands=","
+            f"{filepath}/Load_solution.csv.zip", thousands=","
         ).drop(["weight", "id"], axis=1)
 
     def convert_to_ts(df_load: pd.DataFrame) -> pd.DataFrame:
@@ -42,7 +42,7 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
         .reset_index(level=1)
     )
 
-    df_temperature_1 = pd.read_csv(f"{filepath}/temperature_history.csv")
+    df_temperature_1 = pd.read_csv(f"{filepath}/temperature_history.csv.zip")
 
     df_temperature_1 = pd.melt(
         df_temperature_1,
@@ -59,7 +59,7 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     df_temperature_1 = df_temperature_1.set_index("datetime")
 
     df_temperature_2 = (
-        pd.read_csv(f"{filepath}/temperature_solution.csv")
+        pd.read_csv(f"{filepath}/temperature_solution.csv.zip")
         .drop(["datetime", "date"], axis=1)
         .rename(columns={"T0_p1": "temperature"})
     )
@@ -91,7 +91,7 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
         "data", "bigdeal2022", "qualifying_match"
     )
     with importlib_resources.as_file(ref) as filepath:
-        data = pd.read_csv(f"{filepath}/data_round_1.csv")
+        data = pd.read_csv(f"{filepath}/data_round_1.csv.zip")
 
     data.columns = data.columns.str.lower()
     data["datetime"] = pd.to_datetime(data[["year", "month", "day", "hour"]])
@@ -134,7 +134,7 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
         "data", "bigdeal2022", "final_match"
     )
     with importlib_resources.as_file(ref) as filepath:
-        data = pd.read_csv(f"{filepath}/final_match.csv")
+        data = pd.read_csv(f"{filepath}/final_match.csv.zip")
 
     data.columns = data.columns.str.lower()
     data.index = pd.to_datetime(data["date"])
