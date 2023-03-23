@@ -753,7 +753,27 @@
 
 <a id="pyef.combination"></a>
   <div class="doc doc-contents first">
+  
+      <p>TODO design combination
+Combination class for generating model combinations</p>
+<p>Ideas:</p>
 
+<details class="inputs">
+  <summary>inputs</summary>
+  <ul>
+<li>
+<p>multiple forecaster objects with self.predicted = True
+validate all input models - they should have the same input etf,
+and same input forecaster parameters like pred_start and horizon</p>
+</li>
+<li>
+<p>method - combination method to be applied, eg. simple average,
+weighted average, median, min and max pred at each timestep,
+advanced - stacking. take output of each model to train a new
+forecaster object and generate predictions</p>
+</li>
+</ul>
+</details>
   </div>
 
 </div>
