@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Datasets - Removed csv files and add zipped data files instead
 * General - Added ruff support, slow marker for long tests and more
 
+
 <small>[Compare with latest](https://github.com/sardanabhav/pyef/compare/0.1.0...HEAD)</small>
 
 
