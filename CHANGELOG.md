@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * TimeFrames - Added support for infering frequency
 * Evaluator - Updated the ModelGridSearch to support better logging and parallel execution
 * Datasets - Removed csv files and add zipped data files instead
-* General - Added ruff support, slow marker for long tests
+* General - Added ruff support, slow marker for long tests and more
 <small>[Compare with latest](https://github.com/sardanabhav/pyef/compare/0.1.0...HEAD)</small>
 
 
