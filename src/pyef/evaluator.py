@@ -214,6 +214,8 @@ class ModelGridSearch:
             )
         else:
             results_df = pd.read_json(results_file, lines=True)
+
+        # TODO make this a usable function
         self.grid_in_sample = results_df.loc[
             :, ["M", "pred_start", "horizon", "model"]
         ].join(pd.json_normalize(results_df.pop("in_sample")))

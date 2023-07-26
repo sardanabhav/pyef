@@ -32,6 +32,7 @@ class EnergyTimeFrame:
         self,
         kwh_series: pd.Series | pd.DataFrame,
         weather_series: pd.Series | pd.DataFrame,
+        dd: bool = True,
         ex_ante: bool = False,
         sub_hourly: bool = False,
     ) -> None:
@@ -62,7 +63,8 @@ class EnergyTimeFrame:
             # TODO Move away from adding new features.
             # Instead, use patsy to create these features
 
-            self._add_dd()
+            if dd:
+                self._add_dd()
             self._weather_series = self._add_polynomial(
                 self._weather_series, get_option("preprocessing.weather.pol_dict")
             )
@@ -262,7 +264,8 @@ class EnergyTimeFrame:
         self._temperature_col = value
 
     def infered_series_col(self, series: str) -> str | None:
-        # TODO update this to dynamically read the series and get temperature columns
+        # TODO Update this to handle multiple columns
+        # this returns none if multiple variables are passed
         accepted_cols = get_option(f"preprocessing.{series}.accepted_columns")
         series_cols = self.original_series[f"{series}_series"].columns
         infered_series_cols: list[str] = list(

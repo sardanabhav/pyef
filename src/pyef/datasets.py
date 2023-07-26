@@ -137,7 +137,7 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
         data = pd.read_csv(f"{filepath}/final_match.csv.zip")
 
     data.columns = data.columns.str.lower()
-    data.index = pd.to_datetime(data["date"])
+    data.index = pd.to_datetime(data["date"], format="%d-%b-%y")
     data.index += pd.TimedeltaIndex(data["hour"], unit="h")
     data.index.name = "datetime"
 
