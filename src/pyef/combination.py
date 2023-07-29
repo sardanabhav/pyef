@@ -1,6 +1,5 @@
-"""
-TODO design combination
-Combination class for generating model combinations
+"""TODO design combination
+Combination class for generating model combinations.
 
 Ideas:
 inputs:

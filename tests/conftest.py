@@ -1,19 +1,19 @@
 """Configuration for the pytest test suite."""
 
+import random
+from collections.abc import Generator
 from itertools import product
-from typing import Generator
 
 import pandas as pd
-import random
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def load_temperature_complete(
-    data: dict[str, pd.DataFrame]
+    data: dict[str, pd.DataFrame],
 ) -> Generator[dict[str, pd.DataFrame], None, None]:
     def _load_temperature_gen(
-        data: dict[str, pd.DataFrame]
+        data: dict[str, pd.DataFrame],
     ) -> Generator[dict[str, pd.DataFrame], None, None]:
         load = data["load"]
         temperature = data["temperature"]
@@ -29,12 +29,12 @@ def load_temperature_complete(
     return _load_temperature_gen(data=data)
 
 
-@pytest.fixture
+@pytest.fixture()
 def load_temperature_sample(
-    data: dict[str, pd.DataFrame]
+    data: dict[str, pd.DataFrame],
 ) -> Generator[dict[str, pd.DataFrame], None, None]:
     def _load_temperature_sample_gen(
-        data: dict[str, pd.DataFrame]
+        data: dict[str, pd.DataFrame],
     ) -> Generator[dict[str, pd.DataFrame], None, None]:
         load = data["load"]
         temperature = data["temperature"]

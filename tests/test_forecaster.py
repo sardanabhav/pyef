@@ -1,6 +1,6 @@
-""" Test Forecaster """
+"""Test Forecaster."""
 
-from typing import Iterator
+from collections.abc import Iterator
 
 import pandas as pd
 import pytest
@@ -38,14 +38,14 @@ def test_lr_sample(load_temperature_sample: Iterator[dict[str, pd.DataFrame]]) -
         )
 
         forecaster.get_forecast()
-        print(forecaster.pred)
+        # print(forecaster.pred)
         assert forecaster.pred.shape[0] == 8760
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 @pytest.mark.parametrize("data", test_data)
 def test_lr_complete(
-    load_temperature_complete: Iterator[dict[str, pd.DataFrame]]
+    load_temperature_complete: Iterator[dict[str, pd.DataFrame]],
 ) -> None:
     for load_temperature in load_temperature_complete:
         etf = EnergyTimeFrame(load_temperature["load"], load_temperature["temperature"])
@@ -59,14 +59,15 @@ def test_lr_complete(
         )
 
         forecaster.get_forecast()
-        print(forecaster.pred)
+        # print(forecaster.pred)
         assert forecaster.pred.shape[0] == 8760
 
 
 @pytest.mark.parametrize("max_history", max_history_test_data)
 @pytest.mark.parametrize("data", test_data)
 def test_max_history(
-    load_temperature_sample: Iterator[dict[str, pd.DataFrame]], max_history: str
+    load_temperature_sample: Iterator[dict[str, pd.DataFrame]],
+    max_history: str,
 ) -> None:
     for load_temperature in load_temperature_sample:
         etf = EnergyTimeFrame(load_temperature["load"], load_temperature["temperature"])
@@ -81,9 +82,9 @@ def test_max_history(
         train_start_date = forecaster.y_train.index.min()
         train_stop_date = forecaster.y_test.index.min()
         freq_str = pd.tseries.frequencies.to_offset(
-            train_stop_date - train_start_date
+            train_stop_date - train_start_date,
         ).freqstr
-        print(train_stop_date - train_start_date)
+        # print(train_stop_date - train_start_date)
         assert pd.tseries.frequencies.to_offset(
-            freq_str
+            freq_str,
         ) == pd.tseries.frequencies.to_offset(max_history)

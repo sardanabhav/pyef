@@ -1,5 +1,5 @@
 """logger
-this module should not exist
+this module should not exist.
 """
 
 import logging

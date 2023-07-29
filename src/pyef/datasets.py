@@ -1,13 +1,12 @@
 import os
 
-import pandas as pd
 import importlib_resources
+import pandas as pd
 
 
 def gefcom_load_2012() -> dict[str, pd.DataFrame]:
-    """
-    Loads GEFCom 2012 dataset
-    src: https://www.dropbox.com/s/epj9b57eivn79j7/GEFCom2012.zip?dl=1
+    """Loads GEFCom 2012 dataset
+    src: https://www.dropbox.com/s/epj9b57eivn79j7/GEFCom2012.zip?dl=1.
 
     TODO add references
     TODO add examples
@@ -19,19 +18,22 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     with importlib_resources.as_file(ref) as filepath:
         load_history = pd.read_csv(f"{filepath}/Load_history.csv.zip", thousands=",")
         load_solution = pd.read_csv(
-            f"{filepath}/Load_solution.csv.zip", thousands=","
+            f"{filepath}/Load_solution.csv.zip",
+            thousands=",",
         ).drop(["weight", "id"], axis=1)
 
     def convert_to_ts(df_load: pd.DataFrame) -> pd.DataFrame:
         df_load = pd.melt(
-            df_load, id_vars=["zone_id"] + melt_cols, var_name="hour", value_name="load"
+            df_load,
+            id_vars=["zone_id", *melt_cols],
+            var_name="hour",
+            value_name="load",
         )
         df_load["hour"] = df_load["hour"].str.replace("h", "")
         df_load["hour"] = df_load["hour"].apply(lambda x: int(x))
         df_load["datetime"] = pd.to_datetime(df_load[["year", "month", "day", "hour"]])
         df_load = df_load.drop(["year", "month", "day", "hour"], axis=1)
-        df_load = df_load.set_index("datetime").sort_index()
-        return df_load
+        return df_load.set_index("datetime").sort_index()
 
     load_history = convert_to_ts(df_load=load_history)
     load_solution = convert_to_ts(df_load=load_solution)
@@ -46,14 +48,14 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
 
     df_temperature_1 = pd.melt(
         df_temperature_1,
-        id_vars=["station_id"] + melt_cols,
+        id_vars=["station_id", *melt_cols],
         var_name="hour",
         value_name="temperature",
     )
     df_temperature_1["hour"] = df_temperature_1["hour"].str.replace("h", "")
     df_temperature_1["hour"] = df_temperature_1["hour"].apply(lambda x: int(x))
     df_temperature_1["datetime"] = pd.to_datetime(
-        df_temperature_1[["year", "month", "day", "hour"]]
+        df_temperature_1[["year", "month", "day", "hour"]],
     )
     df_temperature_1 = df_temperature_1.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_1 = df_temperature_1.set_index("datetime")
@@ -65,7 +67,7 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
     )
 
     df_temperature_2["datetime"] = pd.to_datetime(
-        df_temperature_2[["year", "month", "day", "hour"]]
+        df_temperature_2[["year", "month", "day", "hour"]],
     )
     df_temperature_2 = df_temperature_2.drop(["year", "month", "day", "hour"], axis=1)
     df_temperature_2 = df_temperature_2.set_index("datetime")
@@ -81,14 +83,15 @@ def gefcom_load_2012() -> dict[str, pd.DataFrame]:
 
 
 def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
-    """_summary_
+    """_summary_.
 
     Returns:
         dict[str, pd.DataFrame]: _description_
     """
-
     ref = importlib_resources.files("pyef") / os.path.join(
-        "data", "bigdeal2022", "qualifying_match"
+        "data",
+        "bigdeal2022",
+        "qualifying_match",
     )
     with importlib_resources.as_file(ref) as filepath:
         data = pd.read_csv(f"{filepath}/data_round_1.csv.zip")
@@ -117,21 +120,22 @@ def bigdeal_qualifying_2022() -> dict[str, pd.DataFrame]:
     df_temperature_4["station_id"] = 4
 
     df_temperature = pd.concat(
-        [df_temperature_1, df_temperature_2, df_temperature_3, df_temperature_4]
+        [df_temperature_1, df_temperature_2, df_temperature_3, df_temperature_4],
     )
 
     return {"load": df_load, "temperature": df_temperature}
 
 
 def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
-    """_summary_
+    """_summary_.
 
     Returns:
         dict[str, pd.DataFrame]: _description_
     """
-
     ref = importlib_resources.files("pyef") / os.path.join(
-        "data", "bigdeal2022", "final_match"
+        "data",
+        "bigdeal2022",
+        "final_match",
     )
     with importlib_resources.as_file(ref) as filepath:
         data = pd.read_csv(f"{filepath}/final_match.csv.zip")
@@ -158,7 +162,7 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
             df_load_1,
             df_load_2,
             df_load_3,
-        ]
+        ],
     )
 
     df_temperature_1 = data.loc[:, ["t1"]]
@@ -193,7 +197,7 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
             df_temperature_4,
             df_temperature_5,
             df_temperature_6,
-        ]
+        ],
     )
 
     df_temperature_forecast_1 = data.loc[:, ["t1_forecast"]]
@@ -228,7 +232,7 @@ def bigdeal_final_2022() -> dict[str, pd.DataFrame]:
             df_temperature_forecast_4,
             df_temperature_forecast_5,
             df_temperature_forecast_6,
-        ]
+        ],
     )
 
     return {

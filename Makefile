@@ -1,23 +1,22 @@
+export PDM_MULTIRUN_VERSIONS ?= 3.10 3.11
 .DEFAULT_GOAL := help
 SHELL := bash
-
-DUTY = $(shell [ -n "${VIRTUAL_ENV}" ] || echo pdm run) duty
+DUTY := $(if $(VIRTUAL_ENV),,pdm run) duty
 
 args = $(foreach a,$($(subst -,_,$1)_args),$(if $(value $a),$a="$($a)"))
 check_quality_args = files
-docs_serve_args = host port
+docs_args = host port
 release_args = version
 test_args = match
 
 BASIC_DUTIES = \
 	changelog \
+	check-api \
 	check-dependencies \
 	clean \
-	coverage \
+	cov \
 	docs \
 	docs-deploy \
-	docs-regen \
-	docs-serve \
 	format \
 	release
 
@@ -25,6 +24,7 @@ QUALITY_DUTIES = \
 	check-quality \
 	check-docs \
 	check-types \
+	test-not-slow \
 	test
 
 .PHONY: help
@@ -33,7 +33,7 @@ help:
 
 .PHONY: lock
 lock:
-	@pdm lock
+	@pdm lock -G:all
 
 .PHONY: setup
 setup:
@@ -41,8 +41,9 @@ setup:
 
 .PHONY: check
 check:
-	@bash scripts/multirun.sh duty check-quality check-types check-docs
-	@$(DUTY) check-dependencies
+	@#check-quality
+	@pdm multirun -fei `echo $(PDM_MULTIRUN_VERSIONS) | sed "s/ /,/g"` duty check-types check-docs
+	@$(DUTY) check-dependencies check-api
 
 .PHONY: $(BASIC_DUTIES)
 $(BASIC_DUTIES):
@@ -50,4 +51,4 @@ $(BASIC_DUTIES):
 
 .PHONY: $(QUALITY_DUTIES)
 $(QUALITY_DUTIES):
-	@bash scripts/multirun.sh duty $@ $(call args,$@)
+	@pdm multirun -fei `echo $(PDM_MULTIRUN_VERSIONS) | sed "s/ /,/g"` duty $@ $(call args,$@)

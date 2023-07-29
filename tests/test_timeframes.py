@@ -1,6 +1,6 @@
-""" Tests for timeframes. """
+"""Tests for timeframes."""
 
-from typing import Iterator
+from collections.abc import Iterator
 
 import pandas as pd
 import pytest
@@ -10,7 +10,8 @@ from pyef.timeframes import EnergyTimeFrame
 
 
 @pytest.mark.parametrize(
-    "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
+    "data",
+    [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()],
 )
 def test_freq(load_temperature_sample: Iterator[dict[str, pd.DataFrame]]) -> None:
     for a in load_temperature_sample:
@@ -21,10 +22,11 @@ def test_freq(load_temperature_sample: Iterator[dict[str, pd.DataFrame]]) -> Non
 
 
 @pytest.mark.parametrize(
-    "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
+    "data",
+    [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()],
 )
 def test_infered_series(
-    load_temperature_sample: Iterator[dict[str, pd.DataFrame]]
+    load_temperature_sample: Iterator[dict[str, pd.DataFrame]],
 ) -> None:
     for load_temperature in load_temperature_sample:
         etf = EnergyTimeFrame(load_temperature["load"], load_temperature["temperature"])
@@ -43,12 +45,13 @@ def test_infered_series(
         assert etf_update.target_col is None
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 @pytest.mark.parametrize(
-    "data", [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()]
+    "data",
+    [bigdeal_qualifying_2022(), bigdeal_final_2022(), gefcom_load_2012()],
 )
 def test_freq_complete(
-    load_temperature_complete: Iterator[dict[str, pd.DataFrame]]
+    load_temperature_complete: Iterator[dict[str, pd.DataFrame]],
 ) -> None:
     for load_temperature in load_temperature_complete:
         etf = EnergyTimeFrame(load_temperature["load"], load_temperature["temperature"])

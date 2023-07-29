@@ -1,5 +1,8 @@
 """Tests for the `cli` module."""
 
+from __future__ import annotations
+
+import pytest
 
 from pyef import cli
 
@@ -9,14 +12,13 @@ def test_main() -> None:
     assert cli.main([]) == 0
 
 
-# def test_show_help(capsys: pytest.fixture[...]) -> None:
-#     """
-#     Show help.
+def test_show_help(capsys: pytest.CaptureFixture) -> None:
+    """Show help.
 
-#     Arguments:
-#         capsys: Pytest fixture to capture output.
-#     """
-#     with pytest.raises(SystemExit):
-#         cli.main(["-h"])
-#     captured = capsys.readouterr()
-#     assert "pyef" in captured.out
+    Parameters:
+        capsys: Pytest fixture to capture output.
+    """
+    with pytest.raises(SystemExit):
+        cli.main(["-h"])
+    captured = capsys.readouterr()
+    assert "pyef" in captured.out

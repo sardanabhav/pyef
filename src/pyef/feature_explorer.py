@@ -1,6 +1,4 @@
-"""
-
-For Recency like feature exploration in an easy way.
+"""For Recency like feature exploration in an easy way.
 We would include running stuff in parallel and also
 support exploring the search space in different ways.
 
@@ -15,17 +13,16 @@ Using the lag obtained, run for m MA values
 TODO: Think about other feature explorations that can be done
 """
 
-from pyef import ModelGridSearch, EnergyTimeFrame
-from pyef.forecaster import Regressor
 from datetime import datetime
 
+from pyef import EnergyTimeFrame, ModelGridSearch
 from pyef._config import get_option
+from pyef.forecaster import Regressor
 
 
 class Recency:
-    """
-    This implements muultiple algorithms to explore optimal lags and
-    moving averages
+    """This implements muultiple algorithms to explore optimal lags and
+    moving averages.
     """
 
     def __init__(
@@ -39,15 +36,15 @@ class Recency:
         # min_lags: int = 0,
         # min_ma: int = 0,
     ) -> None:
-        """_summary_
+        """_summary_.
 
         Args:
             data (EnergyTimeFrame): ETF object
             model (Regressor): sklearn compatible model
-            max_lags (int, optional): max number lags to explore. account for frequency
-            of the data before setting this. Defaults to 24.
-            max_ma (int, optional): max number of moving average. account for frequency
-            of the data before setting this. Defaults to 24 * 7.
+            pred_start_dates (list[datetime]): list of start dates for prediction
+            horizon (int): horizon for prediction
+            max_lags (int, optional): max no. lags to explore. check frequency of the data before setting this. Defaults to 24.
+            max_ma (int, optional): max no. of moving average. check frequency of the data before setting this. Defaults to 24 * 7.
         """
         self.data = data
         self.model = model
@@ -86,9 +83,7 @@ class Recency:
 
     def naive_method(self) -> None:
         formulae_vanilla_recency = [
-            self.get_formula_vanilla_recency(lag, ma)
-            for lag in range(0, 25)
-            for ma in range(0, 8)
+            self.get_formula_vanilla_recency(lag, ma) for lag in range(0, 25) for ma in range(0, 8)
         ]
         self.grid_search = ModelGridSearch(
             data=self.data,

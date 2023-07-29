@@ -4,7 +4,9 @@ site_url: "https://sardanabhav.github.io/pyef"
 repo_url: "https://github.com/sardanabhav/pyef"
 repo_name: "sardanabhav/pyef"
 site_dir: "site"
-watch: [README.md, CONTRIBUTING.md, CHANGELOG.md, src/pyef]
+watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/pyef]
+copyright: Copyright &copy; 2021 Bhav Sardana
+edit_uri: edit/main/docs/
 
 nav:
 - Home:
@@ -13,7 +15,8 @@ nav:
   - Credits: credits.md
   - License: license.md
 # defer to gen-files + literate-nav
-- Code Reference: reference/
+- API reference:
+  - pyef: reference/
 - Development:
   - Contributing: contributing.md
   - Code of Conduct: code_of_conduct.md
@@ -22,10 +25,26 @@ nav:
 theme:
   name: material
   features:
+  - announce.dismiss
+  - content.action.edit
+  - content.action.view
+  - content.code.annotate
+  - content.code.copy
+  - content.tooltips
+  - navigation.footer
+  - navigation.indexes
+  - navigation.sections
   - navigation.tabs
   - navigation.tabs.sticky
   - navigation.top
+  - search.highlight
+  - search.suggest
+  - toc.follow
   palette:
+  - media: "(prefers-color-scheme)"
+    toggle:
+      icon: material/brightness-auto
+      name: Switch to light mode
   - media: "(prefers-color-scheme: light)"
     scheme: default
     primary: teal
@@ -39,23 +58,31 @@ theme:
     accent: lime
     toggle:
       icon: material/weather-night
-      name: Switch to light mode
+      name: Switch to system preference
 
 extra_css:
 - css/material.css
 - css/mkdocstrings.css
 
 markdown_extensions:
+- attr_list
 - admonition
 - callouts
-- pymdownx.emoji
+- footnotes
+- pymdownx.emoji:
+    emoji_index: !!python/name:materialx.emoji.twemoji
+    emoji_generator: !!python/name:materialx.emoji.to_svg
 - pymdownx.magiclink
 - pymdownx.snippets:
     check_paths: true
 - pymdownx.superfences
 - pymdownx.tabbed:
     alternate_style: true
-- pymdownx.tasklist
+    slugify: !!python/object/apply:pymdownx.slugs.slugify
+      kwds:
+        case: lower
+- pymdownx.tasklist:
+    custom_checkbox: true
 - toc:
     permalink: true
 
@@ -64,14 +91,42 @@ plugins:
 - markdown-exec
 - gen-files:
     scripts:
-    - docs/gen_ref_nav.py
+    - scripts/gen_ref_nav.py
 - literate-nav:
     nav_file: SUMMARY.txt
 - coverage
-- section-index
-- mkdocstrings
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [src]
+        import:
+        - https://docs.python.org/3/objects.inv
+        options:
+          docstring_options:
+            ignore_init_summary: true
+          docstring_section_style: list
+          heading_level: 1
+          merge_init_into_class: true
+          separate_signature: true
+          show_root_heading: true
+          show_root_full_path: false
+          show_signature_annotations: true
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
+          signature_crossrefs: true
+          show_source: true
+- git-committers:
+    enabled: !ENV [DEPLOY, false]
+    repository: sardanabhav/pyef
+
+- minify:
+    minify_html: !ENV [DEPLOY, false]
 
 extra:
   social:
   - icon: fontawesome/brands/github
     link: https://github.com/sardanabhav
+  - icon: fontawesome/brands/gitter
+    link: https://gitter.im/pyef/community
+  - icon: fontawesome/brands/python
+    link: https://pypi.org/project/pyef/

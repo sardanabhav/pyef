@@ -1,11 +1,9 @@
-"""
-Evaluator
-"""
+"""Evaluator."""
 
 import math
 import pathlib
 from datetime import datetime
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 import numpy as np
 import pandas as pd
@@ -18,9 +16,9 @@ from sklearn.metrics import (
     mean_squared_error,
 )
 
+from pyef._config import get_option
 from pyef.forecaster import Forecaster
 from pyef.logger import get_logger
-from pyef._config import get_option
 from pyef.timeframes import EnergyTimeFrame
 
 Regressor = Union[LinearRegression, GradientBoostingRegressor, RandomForestRegressor]
@@ -34,7 +32,7 @@ class Evaluator:
         if not self.forecaster.predicted:
             logger.error(
                 "model not trained.\
-                Please call forecaster <obj>.train before calling evaluator class"
+                Please call forecaster <obj>.train before calling evaluator class",
             )
             raise NotImplementedError
         self.in_sample()
@@ -48,7 +46,8 @@ class Evaluator:
 
     def out_of_sample(self) -> None:
         self.out_of_sample_metrics = self.calculate_metrics(
-            self.forecaster.pred["actuals"], self.forecaster.pred["forecast"]
+            self.forecaster.pred["actuals"],
+            self.forecaster.pred["forecast"],
         )
 
     def peak_timing_error(self, y_true: pd.DataFrame, y_pred: pd.DataFrame) -> Any:
@@ -59,8 +58,10 @@ class Evaluator:
         return np.clip(error["hour"] * error["weight"], a_max=10, a_min=None).sum()
 
     def calculate_metrics(
-        self, y_true: pd.DataFrame, y_pred: pd.DataFrame
-    ) -> Dict[str, float]:
+        self,
+        y_true: pd.DataFrame,
+        y_pred: pd.DataFrame,
+    ) -> dict[str, float]:
         mape = mean_absolute_percentage_error(y_true, y_pred)
         mae = mean_absolute_error(y_true, y_pred)
         rmse = math.sqrt(mean_squared_error(y_true, y_pred))
@@ -121,7 +122,7 @@ class ModelGridSearch:
                                 "M": M_index,
                                 "model": model.__str__(),
                                 "CV": CV_index,
-                            }
+                            },
                         )
 
                     metrics = Evaluator(forecaster=forecast)
@@ -148,7 +149,7 @@ class ModelGridSearch:
             memodecorator = memlist(data=results)
         else:
             self.file_path = pathlib.Path(
-                get_option("log_dir").joinpath(self.result_dir)
+                get_option("log_dir").joinpath(self.result_dir),
             )
             self.file_path.mkdir(parents=True, exist_ok=True)
             results_file = self.file_path.joinpath("results.jsonl")
@@ -160,7 +161,10 @@ class ModelGridSearch:
 
         @memodecorator
         def _execute_model(
-            M: str, model: Regressor, pred_start: datetime, horizon: int
+            M: str,
+            model: Regressor,
+            pred_start: datetime,
+            horizon: int,
         ) -> dict[str, dict[str, float]]:
             model_name = model.__str__().replace("(", "").replace(")", "")
             forecast = Forecaster(
@@ -184,10 +188,10 @@ class ModelGridSearch:
                 pathlib.Path(fig_path).mkdir(parents=True, exist_ok=True)
                 plot_dict = forecast.plot()
                 plot_dict["in_sample"].write_html(
-                    pathlib.Path.home().joinpath(fig_path, "in_sample.html")
+                    pathlib.Path.home().joinpath(fig_path, "in_sample.html"),
                 )
                 plot_dict["out_of_sample"].write_html(
-                    pathlib.Path.home().joinpath(fig_path, "out_of_sample.html")
+                    pathlib.Path.home().joinpath(fig_path, "out_of_sample.html"),
                 )
             metrics = Evaluator(forecaster=forecast)
             return {
@@ -207,20 +211,19 @@ class ModelGridSearch:
         if self.result_dir is None:
             results_df = pd.DataFrame(results)
             results_df.loc[:, "model"] = (
-                results_df["model"]
-                .astype(str)
-                .str.replace(r"(", "", regex=True)
-                .str.replace(r")", "", regex=True)
+                results_df["model"].astype(str).str.replace(r"(", "", regex=True).str.replace(r")", "", regex=True)
             )
         else:
             results_df = pd.read_json(results_file, lines=True)
 
         # TODO make this a usable function
         self.grid_in_sample = results_df.loc[
-            :, ["M", "pred_start", "horizon", "model"]
+            :,
+            ["M", "pred_start", "horizon", "model"],
         ].join(pd.json_normalize(results_df.pop("in_sample")))
         self.grid_out_of_sample = results_df.loc[
-            :, ["M", "pred_start", "horizon", "model"]
+            :,
+            ["M", "pred_start", "horizon", "model"],
         ].join(pd.json_normalize(results_df.pop("out_of_sample")))
         # self.figures = pd.DataFrame(plots)
 

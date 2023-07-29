@@ -13,8 +13,11 @@ site/
 pdm.lock
 .pdm-python
 __pypackages__/
+pdm.toml
+.pdm-plugins/
 .venv/
 .vscode/
+.cache/
 *.ipynb
 *.ipynb*
 .DS_Store

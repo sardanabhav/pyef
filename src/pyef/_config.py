@@ -6,13 +6,18 @@ from optioneer import Optioneer
 options_maker = Optioneer()
 
 options_maker.register_option(
-    "logging_level", logging.INFO, doc="Infer type of series automatically"
+    "logging_level",
+    logging.INFO,
+    doc="Infer type of series automatically",
 )
 options_maker.register_option(
-    "log_dir", pathlib.Path.home().joinpath(".config", "pyef", "logs")
+    "log_dir",
+    pathlib.Path.home().joinpath(".config", "pyef", "logs"),
 )
 options_maker.register_option(
-    "preprocessing.infer_types", True, doc="Infer type of series automatically"
+    "preprocessing.infer_types",
+    True,
+    doc="Infer type of series automatically",
 )
 options_maker.register_option(
     "preprocessing.infer_frequency",
@@ -41,10 +46,14 @@ options_maker.register_option(
     doc="method with which nas are handeled in kwh series",
 )
 options_maker.register_option(
-    "preprocessing.weather.hdd_ref", 58, doc="reference temperature for hdd"
+    "preprocessing.weather.hdd_ref",
+    58,
+    doc="reference temperature for hdd",
 )
 options_maker.register_option(
-    "preprocessing.weather.cdd_ref", 70, doc="reference temperature for cdd"
+    "preprocessing.weather.cdd_ref",
+    70,
+    doc="reference temperature for cdd",
 )
 options_maker.register_option(
     "preprocessing.weather.pol_dict",
