@@ -52,3 +52,5 @@ $(BASIC_DUTIES):
 .PHONY: $(QUALITY_DUTIES)
 $(QUALITY_DUTIES):
 	@pdm multirun -fei `echo $(PDM_MULTIRUN_VERSIONS) | sed "s/ /,/g"` duty $@ $(call args,$@)
+
+precommit: format test-not-slow check

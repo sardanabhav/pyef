@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from duty import duty
-from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
+from duty.callables import blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety  # black,
 
 if TYPE_CHECKING:
     from duty.context import Context
@@ -244,10 +244,17 @@ def format(ctx: Context) -> None:
         ),
         title="Auto-fixing code",
     )
+    # for now, use pdm run black for formating until i can figure out the issue with black.run
     ctx.run(
-        black.run(*PY_SRC_LIST, config="config/black.toml"),
+        # *PY_SRC_LIST
+        f"pdm run black {PY_SRC} --config config/black.toml",
+        # black.run("scripts/", config="config/black.toml", verbose=True),
         title="Formatting code",
     )
+    # ctx.run(
+    #     black.run(*PY_SRC_LIST, config="config/black.toml"),
+    #     title="Formatting code",
+    # )
     ctx.run(
         blacken_docs.run(*PY_SRC_LIST, "docs", exts=["py", "md"], line_length=120),
         title="Formatting docs",

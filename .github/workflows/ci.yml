@@ -68,7 +68,7 @@ jobs:
         python-version:
         - "3.10"
         - "3.11"
-        - "3.12"
+        # - "3.12" - remove this once we are able to test locally (issue due to older setuptools version in 3.12)
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.python-version == '3.12' }}
 
