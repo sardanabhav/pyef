@@ -6,7 +6,7 @@ build-backend = "pdm.backend"
 name = "pyef"
 description = "Energy Forecasting Toolkit in Python"
 authors = [{name = "Bhav Sardana", email = "sardana.bhav@gmail.com"}]
-license = {text = "MIT"}
+license = {text = "GPL-3.0"}
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = []

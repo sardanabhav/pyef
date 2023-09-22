@@ -9,8 +9,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from duty import duty
+
 # <<<<<<< before updating
 from duty.callables import blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety  # black,
+
 # =======
 # from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
 # >>>>>>> after updating

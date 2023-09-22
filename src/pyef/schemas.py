@@ -1,5 +1,4 @@
-"""Defines all input schemas for data validation
-"""
+"""Defines all input schemas for data validation."""
 
 # import pandera as pa
 
@@ -11,9 +10,8 @@
 #         self,
 #     ) -> None:
 #         ...
-    
+
 #     def load_schema() -> pa.DataFrameSchema:
 #         return pa.DataFrameSchema(
 
 #         )
-

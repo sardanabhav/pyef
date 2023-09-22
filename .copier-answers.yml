@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier
-_commit: 0.16.9
+_commit: 0.16.10
 _src_path: gh:pawamoy/copier-pdm
 author_email: sardana.bhav@gmail.com
 author_fullname: Bhav Sardana
@@ -7,7 +7,7 @@ author_username: sardanabhav
 copyright_date: '2023'
 copyright_holder: Bhav Sardana
 copyright_holder_email: sardana.bhav@gmail.com
-copyright_license: MIT License
+copyright_license: GNU General Public License v3.0
 insiders: false
 project_description: Energy Forecasting Toolkit in Python
 project_name: pyef
