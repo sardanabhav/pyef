@@ -9,7 +9,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from duty import duty
+# <<<<<<< before updating
 from duty.callables import blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety  # black,
+# =======
+# from duty.callables import black, blacken_docs, coverage, lazy, mkdocs, mypy, pytest, ruff, safety
+# >>>>>>> after updating
 
 if TYPE_CHECKING:
     from duty.context import Context
@@ -49,10 +53,10 @@ def merge(d1: Any, d2: Any) -> Any:  # noqa: D103
 
 
 def mkdocs_config() -> str:  # noqa: D103
-    from mkdocs import utils
+    import mergedeep
 
-    # patch YAML loader to merge arrays
-    utils.merge = merge
+    # force YAML loader to merge arrays
+    mergedeep.merge = merge
 
     if "+insiders" in pkgversion("mkdocs-material"):
         return "mkdocs.insiders.yml"

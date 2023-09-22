@@ -5,8 +5,13 @@ repo_url: "https://github.com/sardanabhav/pyef"
 repo_name: "sardanabhav/pyef"
 site_dir: "site"
 watch: [mkdocs.yml, README.md, CONTRIBUTING.md, CHANGELOG.md, src/pyef]
-copyright: Copyright &copy; 2021 Bhav Sardana
+copyright: Copyright &copy; 2023 Bhav Sardana
 edit_uri: edit/main/docs/
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
 
 nav:
 - Home:
@@ -101,11 +106,14 @@ plugins:
         paths: [src]
         import:
         - https://docs.python.org/3/objects.inv
+        paths: [src]
         options:
           docstring_options:
             ignore_init_summary: true
           docstring_section_style: list
+          filters: ["!^_"]
           heading_level: 1
+          inherited_members: true
           merge_init_into_class: true
           separate_signature: true
           show_root_heading: true
@@ -114,7 +122,7 @@ plugins:
           show_symbol_type_heading: true
           show_symbol_type_toc: true
           signature_crossrefs: true
-          show_source: true
+          summary: true
 - git-committers:
     enabled: !ENV [DEPLOY, false]
     repository: sardanabhav/pyef
